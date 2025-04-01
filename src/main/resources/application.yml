@@ -28,3 +28,29 @@ spring:
 logging:
   level:
     root: INFO
+
+resilience4j:
+  retry:
+    instances:
+      flaskEmotion:
+        maxAttempts: 3           # 최대 3번 시도
+        waitDuration: 1s         # 1초 간격
+        retryExceptions:
+          - java.io.IOException
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+    timelimiter:
+      instances:
+        flaskEmotion:
+          timeoutDuration: 3s      # 3초 넘으면 fallback
+  circuitbreaker:
+    instances:
+      flaskEmotion:
+        registerHealthIndicator: true
+        slidingWindowSize: 5            # 최근 5번 기준
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50        # 50% 실패 시 circuit open
+        waitDurationInOpenState: 10s    # 10초 후 반쯤 열림(half-open)
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 2s   # 2초 넘으면 느린 호출로 간주
