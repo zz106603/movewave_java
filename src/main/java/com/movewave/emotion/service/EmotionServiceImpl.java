@@ -1,6 +1,5 @@
 package com.movewave.emotion.service;
 
-import com.movewave.emotion.model.request.EmotionRequest;
 import com.movewave.emotion.model.response.EmotionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,14 +16,14 @@ import java.util.Map;
 public class EmotionServiceImpl implements EmotionService {
 
     @Override
-    public EmotionResponse analyzeEmotion(EmotionRequest request) {
+    public EmotionResponse analyzeEmotion(String text) {
         String flaskUrl = "http://localhost:5000/api/emotion/predict";
 
         RestTemplate restTemplate = new RestTemplate();
 
         // Flask에 보낼 JSON body
         Map<String, String> body = new HashMap<>();
-        body.put("text", request.text());
+        body.put("text", text);
 
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
