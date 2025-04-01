@@ -8,6 +8,8 @@ import com.movewave.music.model.response.MusicResponse;
 import com.movewave.music.repository.SongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +27,8 @@ public class MusicServiceImpl implements MusicService{
     public List<MusicResponse> getRecommendSongs(MusicRequest request) {
         try{
             EmotionResponse emotion = emotionService.analyzeEmotion(request.text()).get();
-            List<Song> songs = songRepository.findByEmotion(emotion.prediction());
+            Pageable limit = PageRequest.of(0, 5);
+            List<Song> songs = songRepository.findRandomSongsByEmotion(emotion.prediction(), limit);
             return MusicResponse.from(songs);
         }catch(InterruptedException | ExecutionException e) {
             log.error("감정 분석 실패: {}", e.getMessage());
