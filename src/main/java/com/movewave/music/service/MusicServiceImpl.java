@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -22,8 +23,13 @@ public class MusicServiceImpl implements MusicService{
     private final EmotionService emotionService;
 
     public List<MusicResponse> getRecommendSongs(MusicRequest request) {
-        EmotionResponse emotion = emotionService.analyzeEmotion(request.text());
-        List<Song> songs = songRepository.findByEmotion(emotion.prediction());
-        return MusicResponse.from(songs);
+        try{
+            EmotionResponse emotion = emotionService.analyzeEmotion(request.text()).get();
+            List<Song> songs = songRepository.findByEmotion(emotion.prediction());
+            return MusicResponse.from(songs);
+        }catch(InterruptedException | ExecutionException e) {
+            log.error("감정 분석 실패: {}", e.getMessage());
+            throw new RuntimeException("감정 분석 중 오류 발생", e);
+        }
     }
 }
