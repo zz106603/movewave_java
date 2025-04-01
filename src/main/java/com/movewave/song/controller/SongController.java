@@ -17,7 +17,7 @@ public class SongController {
     private final SongService songService;
 
     @PostMapping(SongApiUrls.MUSIC_URL)
-    public List<SongResponse> analyze(@RequestBody SongRequest request) {
+    public SongResponse analyze(@RequestBody SongRequest request) {
         return songService.getRecommendSongs(request);
     }
 }
