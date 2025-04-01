@@ -1,4 +1,4 @@
-package com.movewave.music.domain;
+package com.movewave.song.domain;
 
 import com.movewave.common.domain.BaseEntity;
 import jakarta.persistence.Column;

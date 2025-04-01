@@ -1,6 +1,6 @@
-package com.movewave.music.repository;
+package com.movewave.song.repository;
 
-import com.movewave.music.domain.Song;
+import com.movewave.song.domain.Song;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
