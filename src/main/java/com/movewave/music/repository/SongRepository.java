@@ -1,10 +1,14 @@
 package com.movewave.music.repository;
 
 import com.movewave.music.domain.Song;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface SongRepository extends JpaRepository<Song, Long> {
-    List<Song> findByEmotion(String emotion);
+    @Query("SELECT s FROM Song s WHERE s.emotion = :emotion AND s.isDeleted = false ORDER BY FUNCTION('RAND')")
+    List<Song> findRandomSongsByEmotion(@Param("emotion") String emotion, Pageable pageable);
 }
