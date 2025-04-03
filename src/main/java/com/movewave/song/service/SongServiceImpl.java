@@ -34,11 +34,10 @@ public class SongServiceImpl implements SongService {
             Pageable limit = PageRequest.of(0, 5);
             List<Song> songs = songRepository.findRandomSongsByEmotion(emotion.prediction(), limit);
 
-            // 여기서 YouTube 정보 붙이기
+            // Youtube 정보
             List<SongWithYoutube> result = songs.stream()
                     .map(song -> {
-                        String query = song.getTitle() + " " + song.getArtist();
-                        YouTubeResult yt = youTubeService.search(query);
+                        YouTubeResult yt = youTubeService.search(song.getTitle(), song.getArtist());
                         return new SongWithYoutube(song, yt.thumbnailUrl(), yt.videoUrl());
                     })
                     .toList();
