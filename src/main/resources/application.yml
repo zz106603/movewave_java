@@ -24,6 +24,9 @@ spring:
       minimum-idle: 5
   application:
     name: movewave_java
+  data:
+    redis.host: localhost
+    port: 6379
 
 logging:
   level:
@@ -54,3 +57,6 @@ resilience4j:
         automaticTransitionFromOpenToHalfOpenEnabled: true
         slowCallRateThreshold: 100
         slowCallDurationThreshold: 2s   # 2초 넘으면 느린 호출로 간주
+
+api:
+  key: ${API_KEY}
