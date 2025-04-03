@@ -5,6 +5,8 @@ import com.movewave.emotion.service.EmotionService;
 import com.movewave.song.domain.Song;
 import com.movewave.song.model.request.SongRequest;
 import com.movewave.song.model.response.SongResponse;
+import com.movewave.song.model.response.SongWithYoutube;
+import com.movewave.song.model.response.YouTubeResult;
 import com.movewave.song.repository.SongRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +26,24 @@ public class SongServiceImpl implements SongService {
 
     private final EmotionService emotionService;
 
+    private final YouTubeService youTubeService;
+
     public SongResponse getRecommendSongs(SongRequest request) {
         try{
             EmotionResponse emotion = emotionService.analyzeEmotion(request.text()).get();
             Pageable limit = PageRequest.of(0, 5);
             List<Song> songs = songRepository.findRandomSongsByEmotion(emotion.prediction(), limit);
-            return SongResponse.from(emotion, songs);
+
+            // 여기서 YouTube 정보 붙이기
+            List<SongWithYoutube> result = songs.stream()
+                    .map(song -> {
+                        String query = song.getTitle() + " " + song.getArtist();
+                        YouTubeResult yt = youTubeService.search(query);
+                        return new SongWithYoutube(song, yt.thumbnailUrl(), yt.videoUrl());
+                    })
+                    .toList();
+
+            return SongResponse.from(emotion, result);
         }catch(InterruptedException | ExecutionException e) {
             log.error("감정 분석 실패: {}", e.getMessage());
             throw new RuntimeException("감정 분석 중 오류 발생", e);
