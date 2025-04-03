@@ -31,7 +31,7 @@ public class SongServiceImpl implements SongService {
     public SongResponse getRecommendSongs(SongRequest request) {
         try{
             EmotionResponse emotion = emotionService.analyzeEmotion(request.text()).get();
-            Pageable limit = PageRequest.of(0, 5);
+            Pageable limit = PageRequest.of(0, 6);
             List<Song> songs = songRepository.findRandomSongsByEmotion(emotion.prediction(), limit);
 
             // Youtube 정보
