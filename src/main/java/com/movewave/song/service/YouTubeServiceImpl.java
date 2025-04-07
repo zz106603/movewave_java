@@ -71,6 +71,7 @@ public class YouTubeServiceImpl implements YouTubeService{
                 .toUriString();
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> callYouTubeApi(String uri) {
         try {
             return webClient.get()
@@ -105,6 +106,6 @@ public class YouTubeServiceImpl implements YouTubeService{
         String videoId = (String) id.get("videoId");
         String videoUrl = youtubeVidioUrl + videoId;
 
-        return new YouTubeResult(query, thumbnailUrl, videoUrl);
+        return new YouTubeResult(query, thumbnailUrl, videoUrl, videoId);
     }
 }
