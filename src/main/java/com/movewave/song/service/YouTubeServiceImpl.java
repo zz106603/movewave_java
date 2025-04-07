@@ -2,6 +2,8 @@ package com.movewave.song.service;
 
 import com.movewave.common.properties.ApiKeyProperties;
 import com.movewave.song.model.response.YouTubeResult;
+import com.movewave.song.model.youtube.YouTubeItem;
+import com.movewave.song.model.youtube.YouTubeSearchResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,7 +44,7 @@ public class YouTubeServiceImpl implements YouTubeService{
         String uri = buildYouTubeSearchUri(query);
 
         // Youtube 요청
-        Map<String, Object> response = callYouTubeApi(uri);
+        YouTubeSearchResponse response = callYouTubeApi(uri);
 
         return parseYouTubeResponse(response, query);
     }
@@ -71,13 +73,12 @@ public class YouTubeServiceImpl implements YouTubeService{
                 .toUriString();
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> callYouTubeApi(String uri) {
+    private YouTubeSearchResponse callYouTubeApi(String uri) {
         try {
             return webClient.get()
                     .uri(uri)
                     .retrieve()
-                    .bodyToMono(Map.class)
+                    .bodyToMono(YouTubeSearchResponse.class)
                     .block();
         } catch (WebClientResponseException e) {
             throw new IllegalStateException("YouTube API 응답 오류: " + e.getStatusCode(), e);
@@ -86,24 +87,14 @@ public class YouTubeServiceImpl implements YouTubeService{
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private YouTubeResult parseYouTubeResponse(Map<String, Object> response, String query) {
-        if (response == null || !response.containsKey("items")) {
-            throw new IllegalStateException("YouTube 응답에 items 필드가 없습니다.");
-        }
-
-        List<Map<String, Object>> items = (List<Map<String, Object>>) response.get("items");
-        if (items.isEmpty()) {
+    private YouTubeResult parseYouTubeResponse(YouTubeSearchResponse response, String query) {
+        if (response == null || response.items() == null || response.items().isEmpty()) {
             throw new NoSuchElementException("YouTube 검색 결과가 없습니다.");
         }
 
-        Map<String, Object> item = items.get(0);
-        Map<String, Object> id = (Map<String, Object>) item.get("id");
-        Map<String, Object> snippet = (Map<String, Object>) item.get("snippet");
-        Map<String, Object> thumbnails = (Map<String, Object>) ((Map<String, Object>) snippet.get("thumbnails")).get("high");
-
-        String thumbnailUrl = (String) thumbnails.get("url");
-        String videoId = (String) id.get("videoId");
+        YouTubeItem item = response.items().get(0);
+        String videoId = item.id().videoId();
+        String thumbnailUrl = item.snippet().thumbnails().high().url();
         String videoUrl = youtubeVidioUrl + videoId;
 
         return new YouTubeResult(query, thumbnailUrl, videoUrl, videoId);
