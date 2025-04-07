@@ -1,9 +1,7 @@
 package com.movewave.song.model.response;
 
-import com.movewave.song.domain.Song;
-
 public record SongWithYoutube(
-        Song song,
+        String videoTitle,      // ex) "아이유 - 마음 (Official Audio)"
         String thumbnailUrl,
         String videoUrl,
         String videoId

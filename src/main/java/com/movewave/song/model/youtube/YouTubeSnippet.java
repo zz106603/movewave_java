@@ -1,3 +1,3 @@
 package com.movewave.song.model.youtube;
 
-public record YouTubeSnippet(YouTubeThumbnails thumbnails) {}
+public record YouTubeSnippet(String title, YouTubeThumbnails thumbnails) {}

@@ -2,6 +2,8 @@ package com.movewave.song.service;
 
 import com.movewave.song.model.response.YouTubeResult;
 
+import java.util.List;
+
 public interface YouTubeService {
-    public YouTubeResult search(String title, String artist);
+    List<YouTubeResult> searchMultiple(String query, int maxResults);
 }

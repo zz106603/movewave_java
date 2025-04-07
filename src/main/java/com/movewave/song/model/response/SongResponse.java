@@ -1,7 +1,6 @@
 package com.movewave.song.model.response;
 
 import com.movewave.emotion.model.response.EmotionResponse;
-import com.movewave.song.domain.Song;
 import java.util.List;
 
 public record SongResponse(
@@ -12,8 +11,7 @@ public record SongResponse(
     public static SongResponse from(EmotionResponse emotion, List<SongWithYoutube> songList) {
         List<SongData> songs = songList.stream()
                 .map(s -> new SongData(
-                        s.song().getTitle(),
-                        s.song().getArtist(),
+                        s.videoTitle(),
                         s.thumbnailUrl(),
                         s.videoUrl(),
                         s.videoId()
@@ -25,7 +23,6 @@ public record SongResponse(
 
     private record SongData(
             String title,
-            String artist,
             String thumbnailUrl,
             String videoUrl,
             String videoId) {}
