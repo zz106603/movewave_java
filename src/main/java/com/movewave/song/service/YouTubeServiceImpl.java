@@ -32,45 +32,34 @@ public class YouTubeServiceImpl implements YouTubeService{
             .build();
 
     @Override
-    @Cacheable(value = "youtubeCache", key = "'youtube:' + #title.replace(' ', '_') + ':' + #artist.replace(' ', '_')")
-    public YouTubeResult search(String title, String artist) {
-        // 노래 제목, 가수 검증
-        validateInput(title, artist);
-
-        // 요청 쿼리 생성
-        String query = buildQuery(title, artist);
-
-        // Youtube 요청 URI 생성
-        String uri = buildYouTubeSearchUri(query);
-
-        // Youtube 요청
-        YouTubeSearchResponse response = callYouTubeApi(uri);
-
-        return parseYouTubeResponse(response, query);
-    }
-
-    private void validateInput(String title, String artist) {
-        if (title == null || title.isBlank() || artist == null || artist.isBlank()) {
-            throw new IllegalArgumentException("title과 artist는 필수입니다.");
+    @Cacheable(value = "youtubeCache", key = "'youtube:' + #query.replace(' ', '_') + ':max=' + #maxResults")
+    public List<YouTubeResult> searchMultiple(String query, int maxResults) {
+        if (query == null || query.isBlank()) {
+            throw new IllegalArgumentException("검색어는 필수입니다.");
         }
-        if (apiKeyProperties.key() == null || apiKeyProperties.key().isBlank()) {
-            throw new IllegalStateException("YouTube API 키가 설정되지 않았습니다.");
-        }
-    }
 
-    private String buildQuery(String title, String artist) {
-        return title + " " + artist;
-    }
-
-    private String buildYouTubeSearchUri(String query) {
-        return UriComponentsBuilder.fromPath("/search")
+        String uri = UriComponentsBuilder.fromPath("/search")
                 .queryParam("part", "snippet")
                 .queryParam("q", query)
                 .queryParam("type", "video")
-                .queryParam("maxResults", 1)
+                .queryParam("maxResults", maxResults)
                 .queryParam("key", apiKeyProperties.key())
                 .build()
                 .toUriString();
+
+        YouTubeSearchResponse response = callYouTubeApi(uri);
+
+        if (response == null || response.items() == null || response.items().isEmpty()) {
+            throw new NoSuchElementException("YouTube 검색 결과가 없습니다.");
+        }
+
+        return response.items().stream().map(item -> {
+            String videoTitle = item.snippet().title();
+            String videoId = item.id().videoId();
+            String thumbnailUrl = item.snippet().thumbnails().high().url();
+            String videoUrl = youtubeVidioUrl + videoId;
+            return new YouTubeResult(videoTitle, thumbnailUrl, videoUrl, videoId);
+        }).toList();
     }
 
     private YouTubeSearchResponse callYouTubeApi(String uri) {
@@ -85,18 +74,5 @@ public class YouTubeServiceImpl implements YouTubeService{
         } catch (Exception e) {
             throw new RuntimeException("YouTube API 호출 실패", e);
         }
-    }
-
-    private YouTubeResult parseYouTubeResponse(YouTubeSearchResponse response, String query) {
-        if (response == null || response.items() == null || response.items().isEmpty()) {
-            throw new NoSuchElementException("YouTube 검색 결과가 없습니다.");
-        }
-
-        YouTubeItem item = response.items().get(0);
-        String videoId = item.id().videoId();
-        String thumbnailUrl = item.snippet().thumbnails().high().url();
-        String videoUrl = youtubeVidioUrl + videoId;
-
-        return new YouTubeResult(query, thumbnailUrl, videoUrl, videoId);
     }
 }
