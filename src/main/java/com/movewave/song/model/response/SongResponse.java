@@ -15,7 +15,8 @@ public record SongResponse(
                         s.song().getTitle(),
                         s.song().getArtist(),
                         s.thumbnailUrl(),
-                        s.videoUrl()
+                        s.videoUrl(),
+                        s.videoId()
                 ))
                 .toList();
 
@@ -26,5 +27,6 @@ public record SongResponse(
             String title,
             String artist,
             String thumbnailUrl,
-            String videoUrl) {}
+            String videoUrl,
+            String videoId) {}
 }

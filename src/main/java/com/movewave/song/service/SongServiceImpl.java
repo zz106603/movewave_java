@@ -28,6 +28,7 @@ public class SongServiceImpl implements SongService {
 
     private final YouTubeService youTubeService;
 
+    @Override
     public SongResponse getRecommendSongs(SongRequest request) {
         try{
             EmotionResponse emotion = emotionService.analyzeEmotion(request.text()).get();
@@ -38,7 +39,7 @@ public class SongServiceImpl implements SongService {
             List<SongWithYoutube> result = songs.stream()
                     .map(song -> {
                         YouTubeResult yt = youTubeService.search(song.getTitle(), song.getArtist());
-                        return new SongWithYoutube(song, yt.thumbnailUrl(), yt.videoUrl());
+                        return new SongWithYoutube(song, yt.thumbnailUrl(), yt.videoUrl(), yt.videoId());
                     })
                     .toList();
 
