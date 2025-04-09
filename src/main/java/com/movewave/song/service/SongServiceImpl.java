@@ -37,7 +37,6 @@ public class SongServiceImpl implements SongService {
             String query = pickRandomKeyword(emotion.keywords());
 
             // 유튜브 실시간 검색 (5개)
-            log.info(query);
             List<YouTubeResult> ytResults = youTubeService.searchMultiple(query, 5);
 
             // 결과를 SongWithYoutube 리스트로 변환
@@ -46,6 +45,7 @@ public class SongServiceImpl implements SongService {
                             yt.videoTitle(),
                             yt.thumbnailUrl(),
                             yt.videoUrl(),
+                            yt.musicUrl(),
                             yt.videoId()
                     ))
                     .toList();

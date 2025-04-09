@@ -18,6 +18,8 @@ import java.util.NoSuchElementException;
 public class YouTubeServiceImpl implements YouTubeService{
 
     private final String youtubeVidioUrl = "https://www.youtube.com/watch?v=";
+    private final String youtubeMusicUrl = "https://music.youtube.com/watch?v=";
+
 
     private final ApiKeyProperties apiKeyProperties;
 
@@ -42,7 +44,8 @@ public class YouTubeServiceImpl implements YouTubeService{
             String videoId = item.id().videoId();
             String thumbnailUrl = item.snippet().thumbnails().high().url();
             String videoUrl = youtubeVidioUrl + videoId;
-            return new YouTubeResult(videoTitle, thumbnailUrl, videoUrl, videoId);
+            String musicUrl = youtubeMusicUrl + videoId;
+            return new YouTubeResult(videoTitle, thumbnailUrl, videoUrl, musicUrl, videoId);
         }).toList();
     }
 }
