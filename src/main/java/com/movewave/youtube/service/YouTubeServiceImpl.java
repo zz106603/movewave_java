@@ -1,22 +1,15 @@
-package com.movewave.song.service;
+package com.movewave.youtube.service;
 
 import com.movewave.common.properties.ApiKeyProperties;
-import com.movewave.song.client.YouTubeApiClient;
-import com.movewave.song.model.response.YouTubeResult;
-import com.movewave.song.model.youtube.YouTubeItem;
-import com.movewave.song.model.youtube.YouTubeSearchResponse;
+import com.movewave.youtube.client.YouTubeApiClient;
+import com.movewave.youtube.model.response.YouTubeResult;
+import com.movewave.youtube.model.response.YouTubeSearchResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 @Slf4j

@@ -1,4 +1,4 @@
-package com.movewave.song.model.response;
+package com.movewave.youtube.model.response;
 
 import java.io.Serializable;
 

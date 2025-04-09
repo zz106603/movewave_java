@@ -58,7 +58,7 @@ resilience4j:
     timelimiter:
       instances:
         flaskEmotion:
-          timeoutDuration: 3s      # 3초 넘으면 fallback
+          timeoutDuration: 6s      # 6초 넘으면 fallback
   circuitbreaker:
     instances:
       flaskEmotion:
@@ -70,7 +70,7 @@ resilience4j:
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
         slowCallRateThreshold: 100
-        slowCallDurationThreshold: 2s   # 2초 넘으면 느린 호출로 간주
+        slowCallDurationThreshold: 5s   # 5초 넘으면 느린 호출로 간주
 
 api:
   key: ${API_KEY}

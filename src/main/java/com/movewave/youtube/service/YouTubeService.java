@@ -1,6 +1,6 @@
-package com.movewave.song.service;
+package com.movewave.youtube.service;
 
-import com.movewave.song.model.response.YouTubeResult;
+import com.movewave.youtube.model.response.YouTubeResult;
 
 import java.util.List;
 
