@@ -26,6 +26,5 @@ public record SongResponse(
             String title,
             String thumbnailUrl,
             String videoUrl,
-            String musicUrl,
             String videoId) {}
 }
