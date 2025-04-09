@@ -3,6 +3,7 @@ package com.movewave.song.controller;
 import com.movewave.song.model.request.SongRequest;
 import com.movewave.song.model.response.SongResponse;
 import com.movewave.song.service.SongService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
 public class SongController {

@@ -19,18 +19,18 @@ import org.springframework.context.annotation.Configuration;
                 description = "Movewave API Documents<br><br>" +
                         "토큰 발급: http://localhost:8080/oauth2/authorization/google"
         ),
-//        security = @SecurityRequirement(name = "bearerAuth"),
+        security = @SecurityRequirement(name = "bearerAuth"),
         servers = {
                 @Server(url = "/",
                         description = "서버 URL"),
         }
 )
-//@SecurityScheme(
-//        name = "bearerAuth",
-//        type = SecuritySchemeType.HTTP,
-//        scheme = "bearer",
-//        bearerFormat = "JWT"
-//)
+@SecurityScheme(
+        name = "bearerAuth",
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
+)
 
 public class SwaggerConfig {
 }

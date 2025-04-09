@@ -1,11 +1,13 @@
 package com.movewave.emotion.service;
 
+import com.movewave.common.properties.ApiKeyProperties;
 import com.movewave.emotion.model.response.EmotionResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,10 +20,13 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmotionServiceImpl implements EmotionService {
 
     private final WebClient webClient;
+
+    public EmotionServiceImpl(@Qualifier("flaskWebClient") WebClient webClient) {
+        this.webClient = webClient;
+    }
 
     @Override
     @Retry(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")

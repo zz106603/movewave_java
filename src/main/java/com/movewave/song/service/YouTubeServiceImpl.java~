@@ -37,7 +37,7 @@ public class YouTubeServiceImpl implements YouTubeService{
             throw new IllegalArgumentException("검색어는 필수입니다.");
         }
 
-        // YouTubeApiClient 사용
+        // YouTube
         YouTubeSearchResponse response = youTubeApiClient.search(query, maxResults, apiKeyProperties.key());
 
         if (response == null || response.items() == null || response.items().isEmpty()) {
