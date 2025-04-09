@@ -1,9 +1,8 @@
-package com.movewave.song.service;
+package com.movewave.youtube.service;
 
 import com.movewave.common.properties.ApiKeyProperties;
-import com.movewave.song.client.YouTubeApiClient;
-import com.movewave.song.model.response.YouTubeResult;
-import com.movewave.song.model.youtube.*;
+import com.movewave.youtube.client.YouTubeApiClient;
+import com.movewave.youtube.model.response.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

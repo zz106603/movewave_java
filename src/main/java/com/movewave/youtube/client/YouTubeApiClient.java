@@ -1,6 +1,6 @@
-package com.movewave.song.client;
+package com.movewave.youtube.client;
 
-import com.movewave.song.model.youtube.YouTubeSearchResponse;
+import com.movewave.youtube.model.response.YouTubeSearchResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;

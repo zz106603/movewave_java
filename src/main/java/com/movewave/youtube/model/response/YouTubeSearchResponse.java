@@ -1,4 +1,4 @@
-package com.movewave.song.model.youtube;
+package com.movewave.youtube.model.response;
 
 import java.util.List;
 

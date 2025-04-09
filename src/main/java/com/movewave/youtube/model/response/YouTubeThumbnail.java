@@ -1,3 +1,3 @@
-package com.movewave.song.model.youtube;
+package com.movewave.youtube.model.response;
 
 public record YouTubeThumbnail(String url) {}
