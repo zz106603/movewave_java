@@ -5,5 +5,5 @@ import com.movewave.emotion.model.response.EmotionResponse;
 import java.util.concurrent.CompletableFuture;
 
 public interface EmotionService {
-    public CompletableFuture<EmotionResponse> analyzeEmotion(String text);
+    public CompletableFuture<EmotionResponse> analyzeEmotion(String text, String type);
 }

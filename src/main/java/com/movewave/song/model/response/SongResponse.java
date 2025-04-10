@@ -6,9 +6,10 @@ import java.util.List;
 public record SongResponse(
         String emotion,
         double confidence,
+        String keyword,
         List<SongData> songs
 ) {
-    public static SongResponse from(EmotionResponse emotion, List<SongWithYoutube> songList) {
+    public static SongResponse from(EmotionResponse emotion, String keyword, List<SongWithYoutube> songList) {
         List<SongData> songs = songList.stream()
                 .map(s -> new SongData(
                         s.videoTitle(),
@@ -19,7 +20,7 @@ public record SongResponse(
                 ))
                 .toList();
 
-        return new SongResponse(emotion.prediction(), emotion.confidence(), songs);
+        return new SongResponse(emotion.prediction(), emotion.confidence(), keyword, songs);
     }
 
     private record SongData(

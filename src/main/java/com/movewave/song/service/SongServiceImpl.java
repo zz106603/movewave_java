@@ -22,8 +22,6 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class SongServiceImpl implements SongService {
 
-    private final SongRepository songRepository;
-
     private final EmotionService emotionService;
 
     private final YouTubeService youTubeService;
@@ -31,7 +29,7 @@ public class SongServiceImpl implements SongService {
     @Override
     public SongResponse getRecommendSongs(SongRequest request) {
         try{
-            EmotionResponse emotion = emotionService.analyzeEmotion(request.text()).get();
+            EmotionResponse emotion = emotionService.analyzeEmotion(request.text(), request.type()).get();
 
             // 감정 결과 → 검색 키워드
             String query = pickRandomKeyword(emotion.keywords());
@@ -50,7 +48,7 @@ public class SongServiceImpl implements SongService {
                     ))
                     .toList();
 
-            return SongResponse.from(emotion, result);
+            return SongResponse.from(emotion, query, result);
         }catch(InterruptedException | ExecutionException e) {
             log.error("감정 분석 실패: {}", e.getMessage());
             throw new RuntimeException("감정 분석 중 오류 발생", e);
