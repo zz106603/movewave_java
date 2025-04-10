@@ -28,10 +28,10 @@ public class EmotionServiceImpl implements EmotionService {
     @Retry(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
     @TimeLimiter(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
     @CircuitBreaker(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
-    public CompletableFuture<EmotionResponse> analyzeEmotion(String text) {
+    public CompletableFuture<EmotionResponse> analyzeEmotion(String text, String type) {
         return webClient.post()
                 .uri("/api/emotion/predict")
-                .bodyValue(Map.of("text", text))
+                .bodyValue(Map.of("text", text, "type", type))
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .map(result -> {
@@ -44,7 +44,7 @@ public class EmotionServiceImpl implements EmotionService {
     }
 
     // fallbackMethod: 호출 실패 or circuit open 시 실행
-    public CompletableFuture<EmotionResponse> fallbackEmotion(String text, Throwable t) {
+    public CompletableFuture<EmotionResponse> fallbackEmotion(String text, String type, Throwable t) {
         log.error("Flask 감정 분석 실패 (fallback): {}", t.getMessage());
         return CompletableFuture.completedFuture(new EmotionResponse("중립", 0.0, List.of("편안한 음악")));
     }
