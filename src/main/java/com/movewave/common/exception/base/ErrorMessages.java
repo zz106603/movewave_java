@@ -6,7 +6,14 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorMessages {
-    BAD_REQUEST("E400-001", "Invalid Request"); // IllegalArgumentException
+    /**
+     * @see IllegalArgumentException
+     */
+    BAD_REQUEST("E400-001", "Invalid Request"),
+    /**
+     * @see EntityNotFoundException
+     */
+    NOT_FOUND_ENTITY("E404-001", "%s Not Found with ID: %s");
 
     private final String code;
     private final String message;

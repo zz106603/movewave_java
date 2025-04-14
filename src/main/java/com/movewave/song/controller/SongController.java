@@ -18,6 +18,11 @@ public class SongController {
 
     private final SongService songService;
 
+    /**
+     * 감정 분석 & 추천 음악 조회
+     * @param request (text, type)
+     * @return SongResponse (emotion, confidence, keyword, songs)
+     */
     @PostMapping(SongApiUrls.MUSIC_URL)
     public SongResponse analyze(@RequestBody SongRequest request) {
         return songService.getRecommendSongs(request);
