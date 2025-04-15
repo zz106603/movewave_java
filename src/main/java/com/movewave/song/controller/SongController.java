@@ -3,28 +3,28 @@ package com.movewave.song.controller;
 import com.movewave.song.model.request.SongRequest;
 import com.movewave.song.model.response.SongResponse;
 import com.movewave.song.service.SongService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Slf4j
-@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
-public class SongController {
+public class SongController implements SongApiDoc {
 
     private final SongService songService;
 
     /**
      * 감정 분석 & 추천 음악 조회
-     * @param request (text, type)
-     * @return SongResponse (emotion, confidence, keyword, songs)
+     * @param request 감정 분석을 위한 텍스트와 타입 정보를 담은 요청 객체
+     * @return SongResponse 감정 분석 결과(emotion, confidence)와 추천 음악 목록(keyword, songs)
      */
     @PostMapping(SongApiUrls.MUSIC_URL)
+    @Override
     public SongResponse analyze(@RequestBody SongRequest request) {
-        return songService.getRecommendSongs(request);
+        log.info("Analyzing emotion and recommending songs for request: {}", request);
+        SongResponse response = songService.getRecommendedSongs(request);
+        log.debug("Analysis result: {}", response);
+        return response;
     }
 }
