@@ -5,27 +5,41 @@ import com.movewave.user.domain.Account;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * 즐겨찾기 노래 엔티티
+ */
 @Entity
-@Table(name = "favorite_song")
+@Table(
+    name = "favorite_song",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_favorite_song_account_video",
+            columnNames = {"account_id", "video_id"}
+        )
+    }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class FavoriteSong extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
-    @Column(nullable = false)
+    @Column(name = "video_id", nullable = false, length = 50)
     private String videoId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String title;
 
+    @Column(length = 500)
     private String thumbnailUrl;
 
+    @Column(length = 500)
     private String videoUrl;
 
+    @Column(length = 500) 
     private String musicUrl;
 }

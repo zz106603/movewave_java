@@ -23,67 +23,80 @@ import java.util.List;
 public class FavoriteSongServiceImpl implements FavoriteSongService {
 
     private final FavoriteSongRepository favoriteSongRepository;
-
     private final AccountRepository accountRepository;
 
-    /*
-        플레이리스트 조회
+    /**
+     * 사용자의 즐겨찾기 목록을 조회합니다.
+     * @param accountId 사용자 ID
+     * @return 즐겨찾기 목록
      */
     @Override
     @Transactional(readOnly = true)
     public List<FavoriteSongResponse> getList(Long accountId) {
         return favoriteSongRepository.findAllByAccountIdAndIsDeletedFalse(accountId).stream()
-                .map(song -> new FavoriteSongResponse(
-                        song.getVideoId(),
-                        song.getTitle(),
-                        song.getThumbnailUrl(),
-                        song.getVideoUrl(),
-                        song.getMusicUrl()))
+                .map(this::convertToResponse)
                 .toList();
     }
 
-    /*
-        플레이리스트 조회(Paging)
+    /**
+     * 사용자의 즐겨찾기 목록을 페이징하여 조회합니다.
+     * @param accountId 사용자 ID
+     * @param pageable 페이징 정보
+     * @return 페이징된 즐겨찾기 목록
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<FavoriteSongResponse> getPage(Long accountId, Pageable pageable) {
         return favoriteSongRepository.findAllByAccountIdAndIsDeletedFalse(accountId, pageable)
-                .map(song -> new FavoriteSongResponse(
-                        song.getVideoId(),
-                        song.getTitle(),
-                        song.getThumbnailUrl(),
-                        song.getVideoUrl(),
-                        song.getMusicUrl()
-                ));
+                .map(this::convertToResponse);
     }
 
-    /*
-        플레이리스트 저장
+    /**
+     * 즐겨찾기에 노래를 추가합니다.
+     * @param accountId 사용자 ID
+     * @param request 추가할 노래 정보
      */
     @Override
     @Transactional
     public void save(Long accountId, FavoriteSongRequest request) {
         Account account = accountRepository.getReferenceById(accountId);
-
-        favoriteSongRepository.save(FavoriteSong.builder()
+        
+        FavoriteSong favoriteSong = FavoriteSong.builder()
                 .account(account)
                 .videoId(request.videoId())
                 .title(request.title())
                 .thumbnailUrl(request.thumbnailUrl())
                 .videoUrl(request.videoUrl())
                 .musicUrl(request.musicUrl())
-                .build());
+                .build();
+                
+        favoriteSongRepository.save(favoriteSong);
     }
 
-    /*
-        플레이리스트 삭제
+    /**
+     * 즐겨찾기에서 노래를 삭제합니다.
+     * @param accountId 사용자 ID
+     * @param videoId 삭제할 노래의 비디오 ID
+     * @throws EntityNotFoundException 해당 노래를 찾을 수 없는 경우
      */
     @Override
     @Transactional
     public void delete(Long accountId, String videoId) {
         FavoriteSong favoriteSong = favoriteSongRepository.findByAccountIdAndVideoIdAndIsDeletedFalse(accountId, videoId)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessages.NOT_FOUND_ENTITY.format(FavoriteSong.class.getSimpleName(), videoId)));
+                .orElseThrow(() -> new EntityNotFoundException(
+                    ErrorMessages.NOT_FOUND_ENTITY.format(FavoriteSong.class.getSimpleName(), videoId)
+                ));
 
         favoriteSong.setDeleted(true);
+    }
+
+    private FavoriteSongResponse convertToResponse(FavoriteSong song) {
+        return new FavoriteSongResponse(
+                song.getVideoId(),
+                song.getTitle(), 
+                song.getThumbnailUrl(),
+                song.getVideoUrl(),
+                song.getMusicUrl()
+        );
     }
 }
