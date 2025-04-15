@@ -22,15 +22,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FavoriteSongController {
 
-    private final static String DEFAULT_PAGE = "0";
-    private final static String DEFAULT_SIZE = "5";
+    private static final String DEFAULT_PAGE = "0";
+    private static final String DEFAULT_SIZE = "5";
 
     private final FavoriteSongService favoriteSongService;
 
     /**
-     * 플레이리스트 목록 조회
-     * @param userDetails (accountId)
-     * @return List<FavoriteSongResponse>
+     * 즐겨찾기 목록 조회
+     * @param userDetails 인증된 사용자 정보
+     * @return 즐겨찾기 목록
      */
     @GetMapping(FavoriteSongApiUrls.FAVORITE_SONG_URL)
     public List<FavoriteSongResponse> getList(@AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -38,11 +38,11 @@ public class FavoriteSongController {
     }
 
     /**
-     * 플레이리스트 목록 조회 (paging)
-     * @param userDetails (accountId)
-     * @param page
-     * @param size
-     * @return
+     * 즐겨찾기 목록 페이징 조회
+     * @param userDetails 인증된 사용자 정보
+     * @param page 페이지 번호 (기본값: 0)
+     * @param size 페이지당 항목 수 (기본값: 5)
+     * @return 페이징된 즐겨찾기 목록
      */
     @GetMapping(FavoriteSongApiUrls.FAVORITE_SONG_PAGE_URL)
     public Page<FavoriteSongResponse> getPage(
@@ -54,25 +54,24 @@ public class FavoriteSongController {
     }
 
     /**
-     * 플레이리스트 저장
-     * @param userDetails (accountId)
-     * @param request (videoId, title, thumbnailUrl, videoUrl, musicUrl)
+     * 즐겨찾기에 노래 추가
+     * @param userDetails 인증된 사용자 정보
+     * @param request 추가할 노래 정보
      */
     @PostMapping(FavoriteSongApiUrls.FAVORITE_SONG_URL)
     public void save(@AuthenticationPrincipal CustomUserDetails userDetails,
-                     @RequestBody FavoriteSongRequest request) {
+                    @RequestBody FavoriteSongRequest request) {
         favoriteSongService.save(userDetails.getAccountId(), request);
     }
 
     /**
-     * 플레이리스트 삭제
-     * @param userDetails (accountId)
-     * @param videoId
+     * 즐겨찾기에서 노래 삭제
+     * @param userDetails 인증된 사용자 정보
+     * @param videoId 삭제할 노래의 비디오 ID
      */
     @DeleteMapping(FavoriteSongApiUrls.FAVORITE_SONG_DELETE_URL)
     public void delete(@AuthenticationPrincipal CustomUserDetails userDetails,
-                       @PathVariable String videoId) {
+                      @PathVariable String videoId) {
         favoriteSongService.delete(userDetails.getAccountId(), videoId);
     }
-
 }
