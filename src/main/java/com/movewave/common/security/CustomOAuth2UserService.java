@@ -52,7 +52,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         // 권한 정보 설정
         Collection<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority(account.getRoles().name())
+                new SimpleGrantedAuthority(account.getRole().name())
         );
 
         return new CustomUserDetails(
@@ -91,7 +91,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .password("oauth_password")
                 .member(member)
                 .loginType(AccountLoginType.GOOGLE)  // 로그인 타입 고정값
-                .roles(AccountRole.ROLE_USER)        // 권한 고정값
+                .role(AccountRole.ROLE_USER)        // 권한 고정값
                 .build());
     }
 }

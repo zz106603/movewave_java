@@ -7,10 +7,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * 사용자 계정 정보를 관리하는 엔티티 클래스입니다.
+ */
 @Entity
 @Table(name = "account")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // PUBLIC -> PROTECTED로 변경하여 무분별한 객체 생성 방지
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 public class Account extends BaseEntity {
@@ -18,6 +21,7 @@ public class Account extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String loginId;
 
+    @Column(length = 255) // 비밀번호 길이 제한 추가
     private String password;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -30,5 +34,6 @@ public class Account extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AccountRole roles;
+    private AccountRole role;
+    
 }
