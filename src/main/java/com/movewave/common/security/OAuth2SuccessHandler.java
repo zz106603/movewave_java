@@ -21,36 +21,42 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 
+/**
+ * OAuth2 인증 성공 시 JWT 토큰을 생성하고 쿠키에 저장하는 핸들러
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
-
     private final RedirectProperties redirectProperties;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        log.info("로그인 성공!");
+        if (!(authentication instanceof OAuth2AuthenticationToken)) {
+            throw new IllegalArgumentException("지원하지 않는 인증 타입입니다.");
+        }
+
+        log.info("OAuth2 로그인 성공");
 
         OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) authentication;
         JwtToken jwtToken = jwtTokenProvider.createToken(auth);
 
-        String accessToken = jwtToken.getAccessToken();
-        String refreshToken = jwtToken.getRefreshToken();
+        setTokenCookies(response, jwtToken);
+        
+        log.info("JWT 토큰 생성 및 쿠키 설정 완료");
+        response.sendRedirect(redirectProperties.url());
+    }
 
-        // 쿠키 생성 및 설정
-        String accessTokenCookie = String.format(CookieConstants.COOKIE_ACCESS_TOKEN, accessToken);
-        String refreshTokenCookie = String.format(CookieConstants.COOKIE_REFRESH_TOKEN, refreshToken);
-
-        log.info(accessTokenCookie);
-        log.info(refreshTokenCookie);
+    /**
+     * JWT 토큰을 쿠키에 설정
+     */
+    private void setTokenCookies(HttpServletResponse response, JwtToken jwtToken) {
+        String accessTokenCookie = String.format(CookieConstants.COOKIE_ACCESS_TOKEN, jwtToken.getAccessToken());
+        String refreshTokenCookie = String.format(CookieConstants.COOKIE_REFRESH_TOKEN, jwtToken.getRefreshToken());
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie);
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie);
-
-        log.info("jwt 성공!");
-        response.sendRedirect(redirectProperties.url());
     }
 }

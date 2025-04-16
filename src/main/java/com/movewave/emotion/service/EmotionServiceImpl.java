@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class EmotionServiceImpl implements EmotionService {
 
     private static final String NEUTRAL_EMOTION = "중립";
@@ -29,8 +28,11 @@ public class EmotionServiceImpl implements EmotionService {
     private static final List<String> DEFAULT_KEYWORDS = List.of("편안한 음악");
     private static final String EMOTION_API_PATH = "/api/emotion/predict";
 
-    @Qualifier("flaskWebClient")
     private final WebClient webClient;
+    
+    public EmotionServiceImpl(@Qualifier("flaskWebClient") WebClient webClient) {
+        this.webClient = webClient;
+    }
 
     /**
      * 텍스트의 감정을 분석하여 결과를 반환합니다.
