@@ -23,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         Account account = accountRepository.findByLoginIdAndIsDeletedFalse(loginId).get();
 
-        GrantedAuthority authority = new SimpleGrantedAuthority(account.getRoles().name());
+        GrantedAuthority authority = new SimpleGrantedAuthority(account.getRole().name());
         Collection<GrantedAuthority> authorities = Collections.singletonList(authority);
 
         return new CustomUserDetails(
