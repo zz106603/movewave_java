@@ -1,86 +1,135 @@
-//package com.movewave.song.service;
-//
-//import com.movewave.emotion.model.response.EmotionResponse;
-//import com.movewave.emotion.service.EmotionService;
-//import com.movewave.song.model.request.SongRequest;
-//import com.movewave.song.model.response.SongResponse;
-//import com.movewave.song.model.response.SongWithYoutube;
-//import com.movewave.youtube.model.response.YouTubeResult;
-//import com.movewave.song.repository.SongRepository;
-//import com.movewave.youtube.service.YouTubeService;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//
-//import java.util.List;
-//import java.util.concurrent.CompletableFuture;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.mockito.Mockito.when;
-//
-//@ExtendWith(MockitoExtension.class)
-//class SongServiceImplTest {
-//
-//    @Mock
-//    private SongRepository songRepository;
-//
-//    @Mock
-//    private EmotionService emotionService;
-//
-//    @Mock
-//    private YouTubeService youTubeService;
-//
-//    @InjectMocks
-//    private SongServiceImpl songService;
-//
-//    private static final String INPUT_TEXT = "오늘 기분 너무 좋아!";
-//    private static final String SENTIMENT = "긍정";
-//    private static final double CONFIDENCE = 0.5;
-//    private static final String KEYWORD = "신나는 노래"; // keywordMap 안에 존재하는 키워드 중 하나
-//
-//    @BeforeEach
-//    void setUp() {
-//        EmotionResponse emotionResponse = new EmotionResponse(SENTIMENT, CONFIDENCE);
-//        when(emotionService.analyzeEmotion(INPUT_TEXT)).thenReturn(CompletableFuture.completedFuture(emotionResponse));
-//
-//        YouTubeResult yt1 = new YouTubeResult("Title1", "thumb1", "url1", "vid1");
-//        YouTubeResult yt2 = new YouTubeResult("Title2", "thumb2", "url2", "vid2");
-//        List<YouTubeResult> ytResults = List.of(yt1, yt2);
-//
-//        // 긍정 → keywordMap 중 하나인 "신나는 노래" 같은 걸 기대
-//        when(youTubeService.searchMultiple(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.eq(5)))
-//                .thenReturn(ytResults);
-//    }
-//
-//    @Test
-//    @DisplayName("추천 노래 정상 응답 반환 테스트")
-//    void testGetRecommendSongs_success() {
-//        SongRequest request = new SongRequest(INPUT_TEXT);
-//
-//        SongResponse response = songService.getRecommendSongs(request);
-//
-//        assertEquals(SENTIMENT, response.emotion());
-//        assertEquals(2, response.songs().size());
-//
-//        SongWithYoutube song1 = response.songs().get(0);
-//        assertEquals("Title1", song1.title());
-//        assertEquals("thumb1", song1.thumbnailUrl());
-//        assertEquals("url1", song1.videoUrl());
-//    }
-//
-//    @Test
-//    @DisplayName("감정 분석 실패 시 예외 발생 테스트")
-//    void testGetRecommendSongs_emotionFails() {
-//        // 감정 분석 실패 (Exception 발생)
-//        when(emotionService.analyzeEmotion(INPUT_TEXT))
-//                .thenThrow(new RuntimeException("감정 분석 실패"));
-//
-//        SongRequest request = new SongRequest(INPUT_TEXT);
-//
-//        assertThrows(RuntimeException.class, () -> songService.getRecommendSongs(request));
-//    }
-//}
+package com.movewave.song.service;
+
+import com.movewave.emotion.model.response.EmotionResponse;
+import com.movewave.emotion.service.EmotionService;
+import com.movewave.song.model.request.SongRequest;
+import com.movewave.song.model.response.SongResponse;
+import com.movewave.youtube.model.response.YouTubeResult;
+import com.movewave.youtube.service.YouTubeService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.given;
+
+@ExtendWith(MockitoExtension.class)
+class SongServiceImplTest {
+
+    @Mock
+    private EmotionService emotionService;
+
+    @Mock
+    private YouTubeService youTubeService;
+
+    @InjectMocks
+    private SongServiceImpl songService;
+
+    private static final String TEST_TEXT = "오늘은 정말 행복한 하루였다";
+    private static final String TEST_TYPE = "일기";
+    private static final String TEST_PREDICTION = "기쁨";
+    private static final double TEST_CONFIDENCE = 0.95;
+    private static final List<String> TEST_KEYWORDS = List.of("행복", "하루");
+    private static final String TEST_VIDEO_TITLE = "행복한 노래";
+    private static final String TEST_THUMBNAIL_URL = "http://test.thumbnail.url";
+    private static final String TEST_VIDEO_URL = "http://test.video.url";
+    private static final String TEST_MUSIC_URL = "http://test.music.url";
+    private static final String TEST_VIDEO_ID = "testVideoId";
+
+    private YouTubeResult youtubeResult;
+
+    @BeforeEach
+    void setUp() {
+        // 기본적인 감정 분석 응답 설정
+        EmotionResponse emotionResponse = new EmotionResponse(TEST_PREDICTION, TEST_CONFIDENCE, TEST_KEYWORDS);
+        given(emotionService.analyzeEmotion(any(), any()))
+                .willReturn(CompletableFuture.completedFuture(emotionResponse));
+
+        // 기본적인 유튜브 검색 결과 설정
+        youtubeResult = new YouTubeResult(
+                TEST_VIDEO_TITLE,
+                TEST_THUMBNAIL_URL,
+                TEST_VIDEO_URL,
+                TEST_MUSIC_URL,
+                TEST_VIDEO_ID
+        );
+    }
+
+    @Test
+    @DisplayName("정상적인 감정 분석과 유튜브 검색이 성공하는 경우")
+    void getRecommendedSongs_Success() {
+        // given
+        SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
+
+        given(youTubeService.searchMultiple(any(), anyInt()))
+                .willReturn(List.of(youtubeResult));
+
+        // when
+        SongResponse response = songService.getRecommendedSongs(request);
+
+        // then
+        assertThat(response.emotion()).isEqualTo(TEST_PREDICTION);
+        assertThat(response.confidence()).isEqualTo(TEST_CONFIDENCE);
+        assertThat(response.songs()).hasSize(1);
+        assertThat(response.songs().get(0).title()).isEqualTo(TEST_VIDEO_TITLE);
+        assertThat(response.songs().get(0).videoId()).isEqualTo(TEST_VIDEO_ID);
+        assertThat(response.songs().get(0).thumbnailUrl()).isEqualTo(TEST_THUMBNAIL_URL);
+        assertThat(response.songs().get(0).videoUrl()).isEqualTo(TEST_VIDEO_URL);
+        assertThat(response.songs().get(0).musicUrl()).isEqualTo(TEST_MUSIC_URL);
+    }
+
+    @Test
+    @DisplayName("키워드가 비어있는 경우 기본 키워드 사용")
+    void getRecommendedSongs_EmptyKeywords() {
+        // given
+        SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
+        EmotionResponse emotionResponse = new EmotionResponse(TEST_PREDICTION, TEST_CONFIDENCE, List.of());
+        given(emotionService.analyzeEmotion(any(), any()))
+                .willReturn(CompletableFuture.completedFuture(emotionResponse));
+
+        // when
+        SongResponse response = songService.getRecommendedSongs(request);
+
+        // then
+        assertThat(response.keyword()).isEqualTo("감성 노래");
+    }
+
+    @Test
+    @DisplayName("감정 분석이 실패하는 경우 예외 발생")
+    void getRecommendedSongs_EmotionAnalysisFailure() {
+        // given
+        SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
+        given(emotionService.analyzeEmotion(any(), any()))
+                .willReturn(CompletableFuture.failedFuture(new RuntimeException("감정 분석 실패")));
+
+        // when & then
+        assertThatThrownBy(() -> songService.getRecommendedSongs(request))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("감정 분석 처리 실패");
+    }
+
+    @Test
+    @DisplayName("유튜브 검색 결과가 없는 경우 빈 리스트 반환")
+    void getRecommendedSongs_NoYouTubeResults() {
+        // given
+        SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
+        given(youTubeService.searchMultiple(any(), anyInt()))
+                .willReturn(List.of());
+
+        // when
+        SongResponse response = songService.getRecommendedSongs(request);
+
+        // then
+        assertThat(response.songs()).isEmpty();
+    }
+}
