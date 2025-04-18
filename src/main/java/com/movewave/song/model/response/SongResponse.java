@@ -33,7 +33,7 @@ public record SongResponse(
     }
 
     @Schema(description = "추천 음악 상세 정보")
-    private record SongData(
+    public record SongData(
             @Schema(description = "음악 제목", example = "행복한 하루에 어울리는 Playlist")
             String title,
             
