@@ -51,7 +51,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**",              // Swagger UI 리소스
                                 "/v3/api-docs/**"             // OpenAPI 문서
                         ).permitAll()
-                        .requestMatchers("/api/song/**").hasRole("USER") // 인증된 사용자만 접근 가능
+                        .requestMatchers(
+                                "/api/song/**", 
+                                "/api/favorite/**", 
+                                "/api/account/**").hasRole("USER") // 인증된 사용자만 접근 가능
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
