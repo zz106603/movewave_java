@@ -13,6 +13,20 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class YouTubeApiClient {
 
+    private static final String SEARCH_PATH = "/search";
+    private static final String PART_PARAM = "part";
+    private static final String QUERY_PARAM = "q";
+    private static final String TYPE_PARAM = "type";
+    private static final String MAX_RESULTS_PARAM = "maxResults";
+    private static final String API_KEY_PARAM = "key";
+    private static final String SNIPPET_VALUE = "snippet";
+    private static final String VIDEO_TYPE = "video";
+    private static final String ERROR_EMPTY_QUERY = "검색어는 필수입니다.";
+    private static final String ERROR_INVALID_MAX_RESULTS = "최대 검색 결과 수는 1 이상이어야 합니다.";
+    private static final String ERROR_EMPTY_API_KEY = "API 키는 필수입니다.";
+    private static final String ERROR_API_RESPONSE = "YouTube API 응답 오류: ";
+    private static final String ERROR_API_CALL = "YouTube API 호출 실패";
+
     private final WebClient webClient;
 
     public YouTubeApiClient(@Qualifier("youTubeWebClient") WebClient webClient) {
@@ -31,21 +45,21 @@ public class YouTubeApiClient {
      */
     public YouTubeSearchResponse search(String query, int maxResults, String apiKey) {
         if (query == null || query.trim().isEmpty()) {
-            throw new IllegalArgumentException("검색어는 필수입니다.");
+            throw new IllegalArgumentException(ERROR_EMPTY_QUERY);
         }
         if (maxResults <= 0) {
-            throw new IllegalArgumentException("최대 검색 결과 수는 1 이상이어야 합니다.");
+            throw new IllegalArgumentException(ERROR_INVALID_MAX_RESULTS);
         }
         if (apiKey == null || apiKey.trim().isEmpty()) {
-            throw new IllegalArgumentException("API 키는 필수입니다.");
+            throw new IllegalArgumentException(ERROR_EMPTY_API_KEY);
         }
 
-        String uri = UriComponentsBuilder.fromPath("/search")
-                .queryParam("part", "snippet")
-                .queryParam("q", query)
-                .queryParam("type", "video")
-                .queryParam("maxResults", maxResults)
-                .queryParam("key", apiKey)
+        String uri = UriComponentsBuilder.fromPath(SEARCH_PATH)
+                .queryParam(PART_PARAM, SNIPPET_VALUE)
+                .queryParam(QUERY_PARAM, query)
+                .queryParam(TYPE_PARAM, VIDEO_TYPE)
+                .queryParam(MAX_RESULTS_PARAM, maxResults)
+                .queryParam(API_KEY_PARAM, apiKey)
                 .build()
                 .toUriString();
 
@@ -56,9 +70,9 @@ public class YouTubeApiClient {
                     .bodyToMono(YouTubeSearchResponse.class)
                     .block(); // 비동기 호출을 동기로 변환
         } catch (WebClientResponseException e) {
-            throw new IllegalStateException("YouTube API 응답 오류: " + e.getStatusCode(), e);
+            throw new IllegalStateException(ERROR_API_RESPONSE + e.getStatusCode(), e);
         } catch (Exception e) {
-            throw new RuntimeException("YouTube API 호출 실패", e);
+            throw new RuntimeException(ERROR_API_CALL, e);
         }
     }
 }
