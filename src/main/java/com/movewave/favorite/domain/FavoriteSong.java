@@ -13,8 +13,8 @@ import lombok.*;
     name = "favorite_song",
     uniqueConstraints = {
         @UniqueConstraint(
-            name = "uk_favorite_song_account_video",
-            columnNames = {"account_id", "video_id"}
+            name = "uk_favorite_song_account_video_deleted",
+            columnNames = {"account_id", "video_id", "is_deleted"}
         )
     }
 )
