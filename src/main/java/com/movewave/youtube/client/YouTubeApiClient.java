@@ -48,12 +48,12 @@ public class YouTubeApiClient {
             throw new IllegalArgumentException("API 키는 필수입니다.");
         }
 
-        String uri = UriComponentsBuilder.fromPath("/search")
-                .queryParam("part", "snippet")
-                .queryParam("q", query)
-                .queryParam("type", "video")
-                .queryParam("maxResults", maxResults)
-                .queryParam("key", apiKey)
+        String uri = UriComponentsBuilder.fromPath(SEARCH_PATH)
+                .queryParam(PART_PARAM, SNIPPET_PART)
+                .queryParam(QUERY_PARAM, query)
+                .queryParam(TYPE_PARAM, VIDEO_TYPE)
+                .queryParam(MAX_RESULTS_PARAM, maxResults)
+                .queryParam(API_KEY_PARAM, apiKey)
                 .build()
                 .toUriString();
 
