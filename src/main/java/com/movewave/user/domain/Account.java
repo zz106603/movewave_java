@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Table(name = "account")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) // PUBLIC -> PROTECTED로 변경하여 무분별한 객체 생성 방지
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder
 public class Account extends BaseEntity {

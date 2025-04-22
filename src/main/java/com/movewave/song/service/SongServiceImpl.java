@@ -24,26 +24,18 @@ public class SongServiceImpl implements SongService {
     private final YouTubeService youTubeService;
 
     @Override
-    public SongResponse getRecommendedSongs(SongRequest request) {
+    public SongResponse analyzeAndRecommend(SongRequest request) {
         try {
             EmotionResponse emotion = emotionService.analyzeEmotion(request.text(), request.type()).get();
 
             // 감정 결과에 따른 검색 키워드 선택
-            String searchKeyword = selectRandomKeyword(emotion.keywords());
+            String searchKeyword = pickRandomSearchKeyword(emotion.keywords());
 
             // 유튜브 실시간 검색 (5개)
             List<YouTubeResult> youtubeResults = youTubeService.searchMultiple(searchKeyword, 5);
 
             // 결과를 SongWithYoutube 리스트로 변환
-            List<SongWithYoutube> songs = youtubeResults.stream()
-                    .map(result -> new SongWithYoutube(
-                            result.videoTitle(),
-                            result.thumbnailUrl(),
-                            result.videoUrl(),
-                            result.musicUrl(),
-                            result.videoId()
-                    ))
-                    .toList();
+            List<SongWithYoutube> songs = mapToSongList(youtubeResults);
 
             return SongResponse.from(emotion, searchKeyword, songs);
         } catch (InterruptedException | ExecutionException e) {
@@ -52,10 +44,22 @@ public class SongServiceImpl implements SongService {
         }
     }
 
-    private String selectRandomKeyword(List<String> keywords) {
+    private String pickRandomSearchKeyword(List<String> keywords) {
         if (keywords == null || keywords.isEmpty()) {
             return "감성 노래";
         }
         return keywords.get(new Random().nextInt(keywords.size()));
+    }
+
+    private List<SongWithYoutube> mapToSongList(List<YouTubeResult> youtubeResults) {
+        return youtubeResults.stream()
+            .map(result -> new SongWithYoutube(
+                    result.videoTitle(),
+                    result.thumbnailUrl(),
+                    result.videoUrl(),
+                    result.musicUrl(),
+                    result.videoId()
+            ))
+            .toList();
     }
 }

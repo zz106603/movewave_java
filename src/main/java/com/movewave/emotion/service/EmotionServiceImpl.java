@@ -28,7 +28,7 @@ public class EmotionServiceImpl implements EmotionService {
     /** 기본 키워드 목록 */
     private static final List<String> DEFAULT_KEYWORDS = List.of("편안한 음악");
 
-    private static final String EMOTION_API_PATH = "/api/emotion/predict";
+    private static final String FLASK_EMOTION_API_PATH = "/api/emotion/predict";
     
     /** Flask API 클라이언트 */
     private final FlaskApiClient flaskApiClient;
@@ -47,7 +47,7 @@ public class EmotionServiceImpl implements EmotionService {
     @CircuitBreaker(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
     public CompletableFuture<EmotionResponse> analyzeEmotion(String text, String type) {
         return flaskApiClient.post(
-            EMOTION_API_PATH,
+            FLASK_EMOTION_API_PATH,
             createRequestBody(text, type),
             EmotionResponse.class
         );

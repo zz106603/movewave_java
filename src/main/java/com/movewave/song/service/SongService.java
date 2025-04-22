@@ -13,5 +13,5 @@ public interface SongService {
      * @param request 감정 분석을 위한 텍스트와 음악 타입이 포함된 요청 객체
      * @return 감정 분석 결과와 추천된 음악 목록
      */
-    SongResponse getRecommendedSongs(SongRequest request);
+    SongResponse analyzeAndRecommend(SongRequest request);
 }

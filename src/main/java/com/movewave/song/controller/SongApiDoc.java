@@ -28,6 +28,6 @@ public interface SongApiDoc {
             )
         }
     )
-    SongResponse analyze(SongRequest request);
+    SongResponse analyzeSong(SongRequest request);
 
 }
