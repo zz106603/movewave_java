@@ -19,6 +19,7 @@ import java.util.List;
 @Slf4j
 @SecurityRequirement(name = "bearerAuth")
 @RestController
+@RequestMapping("/api/favorite/song")
 @RequiredArgsConstructor
 public class FavoriteSongController {
 
@@ -32,7 +33,7 @@ public class FavoriteSongController {
      * @param userDetails 인증된 사용자 정보
      * @return 즐겨찾기 목록
      */
-    @GetMapping(FavoriteSongApiUrls.FAVORITE_SONG_URL)
+    @GetMapping("/")
     public List<FavoriteSongResponse> getList(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return favoriteSongService.getList(userDetails.getAccountId());
     }
@@ -44,7 +45,7 @@ public class FavoriteSongController {
      * @param size 페이지당 항목 수 (기본값: 5)
      * @return 페이징된 즐겨찾기 목록
      */
-    @GetMapping(FavoriteSongApiUrls.FAVORITE_SONG_PAGE_URL)
+    @GetMapping("/page")
     public Page<FavoriteSongResponse> getPage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam(defaultValue = DEFAULT_PAGE) int page,
@@ -58,8 +59,8 @@ public class FavoriteSongController {
      * @param userDetails 인증된 사용자 정보
      * @param request 추가할 노래 정보
      */
-    @PostMapping(FavoriteSongApiUrls.FAVORITE_SONG_URL)
-    public void save(@AuthenticationPrincipal CustomUserDetails userDetails,
+    @PostMapping("/")
+    public void createFavorite(@AuthenticationPrincipal CustomUserDetails userDetails,
                     @RequestBody FavoriteSongRequest request) {
         favoriteSongService.save(userDetails.getAccountId(), request);
     }
@@ -69,8 +70,8 @@ public class FavoriteSongController {
      * @param userDetails 인증된 사용자 정보
      * @param videoId 삭제할 노래의 비디오 ID
      */
-    @DeleteMapping(FavoriteSongApiUrls.FAVORITE_SONG_DELETE_URL)
-    public void delete(@AuthenticationPrincipal CustomUserDetails userDetails,
+    @DeleteMapping("/{videoId}")
+    public void deleteFavorite(@AuthenticationPrincipal CustomUserDetails userDetails,
                       @PathVariable String videoId) {
         favoriteSongService.delete(userDetails.getAccountId(), videoId);
     }

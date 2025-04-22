@@ -43,7 +43,7 @@ public class YouTubeApiClient {
      * @throws IllegalStateException YouTube API가 오류 응답을 반환한 경우
      * @throws RuntimeException API 호출 중 예외가 발생한 경우
      */
-    public YouTubeSearchResponse search(String query, int maxResults, String apiKey) {
+    public YouTubeSearchResponse searchYouTubeVideos(String query, int maxResults, String apiKey) {
         if (query == null || query.trim().isEmpty()) {
             throw new IllegalArgumentException(ERROR_EMPTY_QUERY);
         }

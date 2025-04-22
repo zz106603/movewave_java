@@ -32,7 +32,7 @@ public class FavoriteSongServiceImpl implements FavoriteSongService {
      */
     @Override
     @Transactional(readOnly = true)
-    public List<FavoriteSongResponse> getList(Long accountId) {
+    public List<FavoriteSongResponse> getFavorites(Long accountId) {
         return favoriteSongRepository.findAllByAccountIdAndIsDeletedFalse(accountId).stream()
                 .map(this::convertToResponse)
                 .toList();
@@ -46,7 +46,7 @@ public class FavoriteSongServiceImpl implements FavoriteSongService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<FavoriteSongResponse> getPage(Long accountId, Pageable pageable) {
+    public Page<FavoriteSongResponse> getFavoritesPage(Long accountId, Pageable pageable) {
         return favoriteSongRepository.findAllByAccountIdAndIsDeletedFalse(accountId, pageable)
                 .map(this::convertToResponse);
     }
@@ -58,7 +58,7 @@ public class FavoriteSongServiceImpl implements FavoriteSongService {
      */
     @Override
     @Transactional
-    public void save(Long accountId, FavoriteSongRequest request) {
+    public void createFavorite(Long accountId, FavoriteSongRequest request) {
         Account account = accountRepository.getReferenceById(accountId);
         
         FavoriteSong favoriteSong = FavoriteSong.builder()
@@ -81,7 +81,7 @@ public class FavoriteSongServiceImpl implements FavoriteSongService {
      */
     @Override
     @Transactional
-    public void delete(Long accountId, String videoId) {
+    public void deleteFavorite(Long accountId, String videoId) {
         FavoriteSong favoriteSong = favoriteSongRepository.findByAccountIdAndVideoIdAndIsDeletedFalse(accountId, videoId)
                 .orElseThrow(() -> new EntityNotFoundException(
                     ErrorMessages.NOT_FOUND_ENTITY.format(FavoriteSong.class.getSimpleName(), videoId)

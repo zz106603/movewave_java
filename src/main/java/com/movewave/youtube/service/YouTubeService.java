@@ -16,5 +16,5 @@ public interface YouTubeService {
      * @return 검색된 동영상 정보 목록
      * @throws IllegalArgumentException
      */
-    List<YouTubeResult> searchMultiple(String query, int maxResults);
+    List<YouTubeResult> searchYouTubeVideos(String query, int maxResults);
 }

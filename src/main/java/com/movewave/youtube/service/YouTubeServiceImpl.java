@@ -39,18 +39,18 @@ public class YouTubeServiceImpl implements YouTubeService {
      */
     @Override
     @Cacheable(value = "youtubeCache", key = "'youtube:' + #query.replace(' ', '_') + ':max=' + #maxResults")
-    public List<YouTubeResult> searchMultiple(String query, int maxResults) {
+    public List<YouTubeResult> searchYouTubeVideos(String query, int maxResults) {
         validateQuery(query);
         YouTubeSearchResponse response = searchVideos(query, maxResults);
         validateResponse(response);
-        return convertToYouTubeResults(response.items());
+        return mapToYouTubeResults(response.items());
     }
 
     /**
      * 검색어의 유효성을 검사합니다.
      */
     private void validateQuery(String query) {
-        if (query == null || query.isBlank()) {
+        if (query == null || query.isBlank()) { 
             throw new IllegalArgumentException("검색어는 필수입니다.");
         }
     }
@@ -59,7 +59,7 @@ public class YouTubeServiceImpl implements YouTubeService {
      * YouTube API를 통해 동영상을 검색합니다.
      */
     private YouTubeSearchResponse searchVideos(String query, int maxResults) {
-        return youTubeApiClient.search(query, maxResults, apiKeyProperties.key());
+        return youTubeApiClient.searchYouTubeVideos(query, maxResults, apiKeyProperties.key());
     }
 
     /**
@@ -74,7 +74,7 @@ public class YouTubeServiceImpl implements YouTubeService {
     /**
      * YouTube API 응답을 YouTubeResult 목록으로 변환합니다.
      */
-    private List<YouTubeResult> convertToYouTubeResults(List<YouTubeItem> items) {
+    private List<YouTubeResult> mapToYouTubeResults(List<YouTubeItem> items) {
         return items.stream()
                 .map(this::createYouTubeResult)
                 .toList();

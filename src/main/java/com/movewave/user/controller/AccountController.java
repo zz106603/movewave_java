@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @RestController
+@RequestMapping("/api/account")
 @RequiredArgsConstructor
 public class AccountController implements AccountApiDoc {
 
@@ -27,7 +28,7 @@ public class AccountController implements AccountApiDoc {
      * 계정 정보를 조회합니다.
      * 현재 인증된 사용자의 계정 정보를 반환합니다.
      */
-    @GetMapping(AccountApiUrls.ACCOUNT_URL)
+    @GetMapping("/")
     @Override
     public AccountResponse getAccountInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.debug("계정 정보 조회 요청 - accountId: {}", userDetails.getAccountId());
@@ -40,7 +41,7 @@ public class AccountController implements AccountApiDoc {
      * 로그아웃을 처리합니다.
      * 쿠키를 삭제하여 인증 정보를 제거합니다.
      */
-    @PostMapping(AccountApiUrls.LOGOUT_URL)
+    @PostMapping("/logout")
     @Override
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         log.debug("로그아웃 요청");
