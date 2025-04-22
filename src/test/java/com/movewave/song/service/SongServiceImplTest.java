@@ -71,11 +71,11 @@ class SongServiceImplTest {
         // given
         SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
 
-        given(youTubeService.searchMultiple(any(), anyInt()))
+        given(youTubeService.searchYouTubeVideos(any(), anyInt()))
                 .willReturn(List.of(youtubeResult));
 
         // when
-        SongResponse response = songService.getRecommendedSongs(request);
+        SongResponse response = songService.analyzeAndRecommend(request);
 
         // then
         assertThat(response.emotion()).isEqualTo(TEST_PREDICTION);
@@ -98,7 +98,7 @@ class SongServiceImplTest {
                 .willReturn(CompletableFuture.completedFuture(emotionResponse));
 
         // when
-        SongResponse response = songService.getRecommendedSongs(request);
+        SongResponse response = songService.analyzeAndRecommend(request);
 
         // then
         assertThat(response.keyword()).isEqualTo("감성 노래");
@@ -113,7 +113,7 @@ class SongServiceImplTest {
                 .willReturn(CompletableFuture.failedFuture(new RuntimeException("감정 분석 실패")));
 
         // when & then
-        assertThatThrownBy(() -> songService.getRecommendedSongs(request))
+        assertThatThrownBy(() -> songService.analyzeAndRecommend(request))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("감정 분석 처리 실패");
     }
@@ -123,11 +123,11 @@ class SongServiceImplTest {
     void getRecommendedSongs_NoYouTubeResults() {
         // given
         SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
-        given(youTubeService.searchMultiple(any(), anyInt()))
+        given(youTubeService.searchYouTubeVideos(any(), anyInt()))
                 .willReturn(List.of());
 
         // when
-        SongResponse response = songService.getRecommendedSongs(request);
+        SongResponse response = songService.analyzeAndRecommend(request);
 
         // then
         assertThat(response.songs()).isEmpty();

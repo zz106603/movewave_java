@@ -32,7 +32,7 @@ public class SongServiceImpl implements SongService {
             String searchKeyword = pickRandomSearchKeyword(emotion.keywords());
 
             // 유튜브 실시간 검색 (5개)
-            List<YouTubeResult> youtubeResults = youTubeService.searchMultiple(searchKeyword, 5);
+            List<YouTubeResult> youtubeResults = youTubeService.searchYouTubeVideos(searchKeyword, 5);
 
             // 결과를 SongWithYoutube 리스트로 변환
             List<SongWithYoutube> songs = mapToSongList(youtubeResults);

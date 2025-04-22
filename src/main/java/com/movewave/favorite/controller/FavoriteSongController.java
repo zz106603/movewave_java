@@ -4,8 +4,6 @@ import com.movewave.common.security.CustomUserDetails;
 import com.movewave.favorite.model.request.FavoriteSongRequest;
 import com.movewave.favorite.model.response.FavoriteSongResponse;
 import com.movewave.favorite.service.FavoriteSongService;
-import com.movewave.song.controller.SongApiUrls;
-import com.movewave.user.domain.Account;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +31,9 @@ public class FavoriteSongController {
      * @param userDetails 인증된 사용자 정보
      * @return 즐겨찾기 목록
      */
-    @GetMapping("/")
+    @GetMapping("")
     public List<FavoriteSongResponse> getList(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return favoriteSongService.getList(userDetails.getAccountId());
+        return favoriteSongService.getFavorites(userDetails.getAccountId());
     }
 
     /**
@@ -51,7 +49,7 @@ public class FavoriteSongController {
             @RequestParam(defaultValue = DEFAULT_PAGE) int page,
             @RequestParam(defaultValue = DEFAULT_SIZE) int size
     ) {
-        return favoriteSongService.getPage(userDetails.getAccountId(), PageRequest.of(page, size));
+        return favoriteSongService.getFavoritesPage(userDetails.getAccountId(), PageRequest.of(page, size));
     }
 
     /**
@@ -59,10 +57,10 @@ public class FavoriteSongController {
      * @param userDetails 인증된 사용자 정보
      * @param request 추가할 노래 정보
      */
-    @PostMapping("/")
+    @PostMapping("")
     public void createFavorite(@AuthenticationPrincipal CustomUserDetails userDetails,
                     @RequestBody FavoriteSongRequest request) {
-        favoriteSongService.save(userDetails.getAccountId(), request);
+        favoriteSongService.createFavorite(userDetails.getAccountId(), request);
     }
 
     /**
@@ -73,6 +71,6 @@ public class FavoriteSongController {
     @DeleteMapping("/{videoId}")
     public void deleteFavorite(@AuthenticationPrincipal CustomUserDetails userDetails,
                       @PathVariable String videoId) {
-        favoriteSongService.delete(userDetails.getAccountId(), videoId);
+        favoriteSongService.deleteFavorite(userDetails.getAccountId(), videoId);
     }
 }

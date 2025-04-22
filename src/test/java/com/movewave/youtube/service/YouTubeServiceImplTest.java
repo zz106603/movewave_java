@@ -53,11 +53,11 @@ class YouTubeServiceImplTest {
         // given
         given(apiKeyProperties.key()).willReturn(TEST_API_KEY);
         YouTubeSearchResponse mockResponse = createMockSearchResponse();
-        given(youTubeApiClient.search(anyString(), anyInt(), anyString()))
+        given(youTubeApiClient.searchYouTubeVideos(anyString(), anyInt(), anyString()))
                 .willReturn(mockResponse);
 
         // when
-        List<YouTubeResult> results = youTubeService.searchMultiple(TEST_QUERY, TEST_MAX_RESULTS);
+        List<YouTubeResult> results = youTubeService.searchYouTubeVideos(TEST_QUERY, TEST_MAX_RESULTS);
 
         // then
         assertThat(results).hasSize(1);
@@ -73,7 +73,7 @@ class YouTubeServiceImplTest {
     @DisplayName("검색어가 null인 경우 예외 발생")
     void searchMultiple_NullQuery() {
         // when & then
-        assertThatThrownBy(() -> youTubeService.searchMultiple(null, TEST_MAX_RESULTS))
+        assertThatThrownBy(() -> youTubeService.searchYouTubeVideos(null, TEST_MAX_RESULTS))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("검색어는 필수입니다.");
     }
@@ -82,7 +82,7 @@ class YouTubeServiceImplTest {
     @DisplayName("검색어가 비어있는 경우 예외 발생")
     void searchMultiple_EmptyQuery() {
         // when & then
-        assertThatThrownBy(() -> youTubeService.searchMultiple("", TEST_MAX_RESULTS))
+        assertThatThrownBy(() -> youTubeService.searchYouTubeVideos("", TEST_MAX_RESULTS))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("검색어는 필수입니다.");
     }
@@ -93,11 +93,11 @@ class YouTubeServiceImplTest {
         // given
         given(apiKeyProperties.key()).willReturn(TEST_API_KEY);
         YouTubeSearchResponse emptyResponse = new YouTubeSearchResponse(List.of());
-        given(youTubeApiClient.search(anyString(), anyInt(), anyString()))
+        given(youTubeApiClient.searchYouTubeVideos(anyString(), anyInt(), anyString()))
                 .willReturn(emptyResponse);
 
         // when & then
-        assertThatThrownBy(() -> youTubeService.searchMultiple(TEST_QUERY, TEST_MAX_RESULTS))
+        assertThatThrownBy(() -> youTubeService.searchYouTubeVideos(TEST_QUERY, TEST_MAX_RESULTS))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("YouTube 검색 결과가 없습니다.");
     }
@@ -107,11 +107,11 @@ class YouTubeServiceImplTest {
     void searchMultiple_NullResponse() {
         // given
         given(apiKeyProperties.key()).willReturn(TEST_API_KEY);
-        given(youTubeApiClient.search(anyString(), anyInt(), anyString()))
+        given(youTubeApiClient.searchYouTubeVideos(anyString(), anyInt(), anyString()))
                 .willReturn(null);
 
         // when & then
-        assertThatThrownBy(() -> youTubeService.searchMultiple(TEST_QUERY, TEST_MAX_RESULTS))
+        assertThatThrownBy(() -> youTubeService.searchYouTubeVideos(TEST_QUERY, TEST_MAX_RESULTS))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("YouTube 검색 결과가 없습니다.");
     }
