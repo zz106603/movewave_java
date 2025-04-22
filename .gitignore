@@ -87,5 +87,6 @@ gradle-app.setting
 
 #환경변수 숨김
 .env
+cursor.json
 
 # End of https://www.toptal.com/developers/gitignore/api/java,gradle
