@@ -85,7 +85,7 @@ class FavoriteSongServiceImplTest {
                 .willReturn(List.of(favoriteSong));
 
         // when
-        List<FavoriteSongResponse> result = favoriteSongService.getList(account.getId());
+        List<FavoriteSongResponse> result = favoriteSongService.getFavorites(account.getId());
 
         // then
         assertThat(result).hasSize(1);
@@ -103,7 +103,7 @@ class FavoriteSongServiceImplTest {
                 .willReturn(favoriteSongPage);
 
         // when
-        Page<FavoriteSongResponse> result = favoriteSongService.getPage(account.getId(), pageable);
+        Page<FavoriteSongResponse> result = favoriteSongService.getFavoritesPage(account.getId(), pageable);
 
         // then
         assertThat(result.getContent()).hasSize(1);
@@ -117,7 +117,7 @@ class FavoriteSongServiceImplTest {
         given(accountRepository.getReferenceById(account.getId())).willReturn(account);
 
         // when
-        favoriteSongService.save(account.getId(), request);
+        favoriteSongService.createFavorite(account.getId(), request);
 
         // then
         verify(favoriteSongRepository).save(any(FavoriteSong.class));
@@ -131,7 +131,7 @@ class FavoriteSongServiceImplTest {
                 .willReturn(Optional.of(favoriteSong));
 
         // when
-        favoriteSongService.delete(account.getId(), favoriteSong.getVideoId());
+        favoriteSongService.deleteFavorite(account.getId(), favoriteSong.getVideoId());
 
         // then
         assertThat(favoriteSong.isDeleted()).isTrue();
@@ -145,7 +145,7 @@ class FavoriteSongServiceImplTest {
                 .willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> favoriteSongService.delete(account.getId(), NON_EXISTENT_ID))
+        assertThatThrownBy(() -> favoriteSongService.deleteFavorite(account.getId(), NON_EXISTENT_ID))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessageContaining(ErrorMessages.NOT_FOUND_ENTITY.format(FavoriteSong.class.getSimpleName(), NON_EXISTENT_ID));
     }

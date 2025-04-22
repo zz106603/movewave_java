@@ -28,7 +28,7 @@ public class AccountController implements AccountApiDoc {
      * 계정 정보를 조회합니다.
      * 현재 인증된 사용자의 계정 정보를 반환합니다.
      */
-    @GetMapping("/")
+    @GetMapping("")
     @Override
     public AccountResponse getAccountInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
         log.debug("계정 정보 조회 요청 - accountId: {}", userDetails.getAccountId());

@@ -20,7 +20,7 @@ public class SongController implements SongApiDoc {
      * @param request 감정 분석을 위한 텍스트와 타입 정보를 담은 요청 객체
      * @return SongResponse 감정 분석 결과(emotion, confidence)와 추천 음악 목록(keyword, songs)
      */
-    @PostMapping("/")
+    @PostMapping("")
     @Override
     public SongResponse analyzeSong(@RequestBody SongRequest request) {
         log.info("Analyzing emotion and recommending songs for request: {}", request);

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
+import static com.movewave.common.util.HttpRequestInfoUtils.*;
+
 /**
  * Controller 계층의 API 호출에 대한 로깅을 담당하는 Aspect
  * - API 메서드 실행 시간을 측정하고 로깅
@@ -26,23 +28,23 @@ public class LoggingAspect {
     @Around("execution(* com.movewave.*.controller..*(..)) || execution(* com.movewave.*.*.controller..*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
-
+    
         try {
-            Object proceed = joinPoint.proceed();
-            return proceed;
+            return joinPoint.proceed();
         } finally {
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
-
-            log.info(
-                    "API Call - Method: {}, Duration: {} ms, Start Time: {}, End Time: {}, Arguments: {}",
+    
+            log.info("[{}] {}{} | {}ms | IP: {} | UA: {} | Method: {} | Args: {}",
+                    getMethod(),
+                    getUri(),
+                    !getQueryString().isEmpty() ? "?" + getQueryString() : "",
+                    duration,
+                    getRemoteAddr(),
+                    getUserAgent(),
                     joinPoint.getSignature(),
-                    duration, 
-                    startTime,
-                    endTime,
                     Arrays.toString(joinPoint.getArgs())
             );
         }
     }
-
 }
