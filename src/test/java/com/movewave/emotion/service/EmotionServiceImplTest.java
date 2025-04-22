@@ -1,5 +1,6 @@
 package com.movewave.emotion.service;
 
+import com.movewave.emotion.client.FlaskApiClient;
 import com.movewave.emotion.model.response.EmotionResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,16 +25,7 @@ import static org.mockito.Mockito.when;
 class EmotionServiceImplTest {
 
     @Mock
-    private WebClient webClient;
-
-    @Mock
-    private WebClient.RequestBodyUriSpec requestBodyUriSpec;
-
-    @Mock
-    private WebClient.RequestBodySpec requestBodySpec;
-
-    @Mock
-    private WebClient.ResponseSpec responseSpec;
+    private FlaskApiClient flaskApiClient;
 
     @InjectMocks
     private EmotionServiceImpl emotionService;
@@ -49,17 +41,13 @@ class EmotionServiceImplTest {
     @DisplayName("정상적인 감정 분석 응답 처리")
     void analyzeEmotion_Success() {
         // given
-        Map<String, Object> mockResponse = Map.of(
-                "prediction", TEST_EMOTION,
-                "confidence", TEST_CONFIDENCE,
-                "keywords", TEST_KEYWORDS
-        );
-        
-        when(webClient.post()).thenReturn(requestBodyUriSpec);
-        when(requestBodyUriSpec.uri(eq(EMOTION_API_PATH))).thenReturn(requestBodySpec);
-        when(requestBodySpec.bodyValue(any())).thenReturn((WebClient.RequestHeadersSpec) requestBodySpec);
-        when(requestBodySpec.retrieve()).thenReturn(responseSpec);
-        when(responseSpec.bodyToMono(any(ParameterizedTypeReference.class))).thenReturn(Mono.just(mockResponse));
+        EmotionResponse expected = new EmotionResponse(TEST_EMOTION, TEST_CONFIDENCE, TEST_KEYWORDS);
+
+        when(flaskApiClient.post(
+                eq(EMOTION_API_PATH),
+                any(Map.class),
+                eq(EmotionResponse.class)
+        )).thenReturn(CompletableFuture.completedFuture(expected));
 
         // when
         CompletableFuture<EmotionResponse> result = emotionService.analyzeEmotion(TEST_TEXT, TEST_TYPE);
