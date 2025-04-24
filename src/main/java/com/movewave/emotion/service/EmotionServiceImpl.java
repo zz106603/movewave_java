@@ -2,15 +2,14 @@ package com.movewave.emotion.service;
 
 import com.movewave.emotion.client.FlaskApiClient;
 import com.movewave.emotion.model.response.EmotionResponse;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import io.github.resilience4j.retry.annotation.Retry;
-import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -27,8 +26,6 @@ public class EmotionServiceImpl implements EmotionService {
     private static final double DEFAULT_CONFIDENCE = 0.0;
     /** 기본 키워드 목록 */
     private static final List<String> DEFAULT_KEYWORDS = List.of("편안한 음악");
-
-    private static final String FLASK_EMOTION_API_PATH = "/api/emotion/predict";
     
     /** Flask API 클라이언트 */
     private final FlaskApiClient flaskApiClient;
@@ -39,21 +36,23 @@ public class EmotionServiceImpl implements EmotionService {
      *
      * @param text 분석할 텍스트
      * @param type 텍스트 타입 (예: '힙합', '발라드' 등)
-     * @return 감정 분석 결과를 포함한 CompletableFuture
+     * @return 감정 분석 결과를 포함한 EmotionResponse
      */
     @Override
-    @Retry(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
-    @TimeLimiter(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
-    @CircuitBreaker(name = "flaskEmotion", fallbackMethod = "fallbackEmotion")
-    public CompletableFuture<EmotionResponse> analyzeEmotion(String text, String type) {
-        return flaskApiClient.post(
-            FLASK_EMOTION_API_PATH,
-            createRequestBody(text, type),
-            EmotionResponse.class
-        );
+    @Retryable(
+        value = { Exception.class },       // 어떤 예외에서 재시도할지
+        maxAttempts = 3,                   // 최대 재시도 횟수
+        backoff = @Backoff(delay = 1000)   // 재시도 간 간격(ms)
+    )
+    public EmotionResponse analyzeEmotion(String text, String type) {
+        try {
+            return flaskApiClient.analyzeEmotion(createRequestBody(text, type));
+        } catch (Exception e) {
+            log.warn("Flask API 실패 → fallback 사용: {}", e.getMessage());
+            return fallbackEmotion();
+        }
     }
     
-
     /**
      * API 요청에 필요한 요청 본문을 생성합니다.
      * 
@@ -64,20 +63,8 @@ public class EmotionServiceImpl implements EmotionService {
     private Map<String, String> createRequestBody(String text, String type) {
         return Map.of("text", text, "type", type);
     }
-    
-    /**
-     * 감정 분석 실패 시 실행되는 폴백 메서드입니다.
-     * 기본값을 포함한 EmotionResponse를 반환합니다.
-     *
-     * @param text 분석하려 했던 텍스트
-     * @param type 텍스트 타입
-     * @param t 발생한 예외
-     * @return 기본 감정 분석 결과를 포함한 CompletableFuture
-     */
-    public CompletableFuture<EmotionResponse> fallbackEmotion(String text, String type, Throwable t) {
-        log.error("Flask 감정 분석 실패 (fallback): {}", t.getMessage());
-        return CompletableFuture.completedFuture(
-                new EmotionResponse(NEUTRAL_EMOTION, DEFAULT_CONFIDENCE, DEFAULT_KEYWORDS)
-        );
+
+    private EmotionResponse fallbackEmotion() {
+        return new EmotionResponse(NEUTRAL_EMOTION, DEFAULT_CONFIDENCE, DEFAULT_KEYWORDS);
     }
 }
