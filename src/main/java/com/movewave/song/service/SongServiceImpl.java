@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -26,7 +25,7 @@ public class SongServiceImpl implements SongService {
     @Override
     public SongResponse analyzeAndRecommend(SongRequest request) {
         try {
-            EmotionResponse emotion = emotionService.analyzeEmotion(request.text(), request.type()).get();
+            EmotionResponse emotion = emotionService.analyzeEmotion(request.text(), request.type());
 
             // 감정 결과에 따른 검색 키워드 선택
             String searchKeyword = pickRandomSearchKeyword(emotion.keywords());
@@ -38,7 +37,7 @@ public class SongServiceImpl implements SongService {
             List<SongWithYoutube> songs = mapToSongList(youtubeResults);
 
             return SongResponse.from(emotion, searchKeyword, songs);
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             log.error("감정 분석 중 오류 발생: {}", e.getMessage());
             throw new RuntimeException("감정 분석 처리 실패", e);
         }

@@ -1,30 +1,16 @@
 package com.movewave.emotion.client;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.concurrent.CompletableFuture;
+import com.movewave.emotion.model.response.EmotionResponse;
 
-@Component
-public class FlaskApiClient {
+import java.util.Map;
 
-    private final WebClient webClient;
+@FeignClient(name = "flaskClient", url = "http://localhost:3000")
+public interface FlaskApiClient {
 
-    public FlaskApiClient(@Qualifier("flaskWebClient") WebClient webClient) {
-        this.webClient = webClient;
-    }
-
-    public <T> CompletableFuture<T> post(
-            String uri,
-            Object requestBody,
-            Class<T> responseType
-    ) {
-        return webClient.post()
-                .uri(uri)
-                .bodyValue(requestBody)
-                .retrieve()
-                .bodyToMono(responseType)
-                .toFuture();
-    }
+    @PostMapping(value = "/api/emotion/predict")
+    EmotionResponse analyzeEmotion(@RequestBody Map<String, String> requestBody);
 }

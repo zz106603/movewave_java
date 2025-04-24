@@ -23,6 +23,8 @@ public class YouTubeServiceImpl implements YouTubeService {
 
     private static final String YOUTUBE_VIDEO_URL = "https://www.youtube.com/watch?v=";
     private static final String YOUTUBE_MUSIC_URL = "https://music.youtube.com/watch?v=";
+    private static final String YOUTUBE_PART = "snippet";
+    private static final String YOUTUBE_TYPE = "video";
 
     private final ApiKeyProperties apiKeyProperties;
     private final YouTubeApiClient youTubeApiClient;
@@ -41,7 +43,9 @@ public class YouTubeServiceImpl implements YouTubeService {
     @Cacheable(value = "youtubeCache", key = "'youtube:' + #query.replace(' ', '_') + ':max=' + #maxResults")
     public List<YouTubeResult> searchYouTubeVideos(String query, int maxResults) {
         validateQuery(query);
-        YouTubeSearchResponse response = searchVideos(query, maxResults);
+        YouTubeSearchResponse response = youTubeApiClient.searchVideos(
+            YOUTUBE_PART, query, YOUTUBE_TYPE, maxResults, apiKeyProperties.key()
+        );
         validateResponse(response);
         return mapToYouTubeResults(response.items());
     }
@@ -53,13 +57,6 @@ public class YouTubeServiceImpl implements YouTubeService {
         if (query == null || query.isBlank()) { 
             throw new IllegalArgumentException("검색어는 필수입니다.");
         }
-    }
-
-    /**
-     * YouTube API를 통해 동영상을 검색합니다.
-     */
-    private YouTubeSearchResponse searchVideos(String query, int maxResults) {
-        return youTubeApiClient.searchYouTubeVideos(query, maxResults, apiKeyProperties.key());
     }
 
     /**
