@@ -18,29 +18,31 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class SongServiceImpl implements SongService {
+    /** 기본 감정 상태 */
+    private static final String NEUTRAL_EMOTION = "중립";
+    /** 기본 신뢰도 값 */
+    private static final double DEFAULT_CONFIDENCE = 0.0;
+    /** 기본 키워드 목록 */
+    private static final List<String> DEFAULT_KEYWORDS = List.of("편안한 음악");
 
     private final EmotionService emotionService;
     private final YouTubeService youTubeService;
 
     @Override
     public SongResponse analyzeAndRecommend(SongRequest request) {
+        EmotionResponse emotion;
         try {
-            EmotionResponse emotion = emotionService.analyzeEmotion(request.text(), request.type());
-
-            // 감정 결과에 따른 검색 키워드 선택
-            String searchKeyword = pickRandomSearchKeyword(emotion.keywords());
-
-            // 유튜브 실시간 검색 (5개)
-            List<YouTubeResult> youtubeResults = youTubeService.searchYouTubeVideos(searchKeyword, 5);
-
-            // 결과를 SongWithYoutube 리스트로 변환
-            List<SongWithYoutube> songs = mapToSongList(youtubeResults);
-
-            return SongResponse.from(emotion, searchKeyword, songs);
+            emotion = emotionService.analyzeEmotion(request.text(), request.type());
         } catch (Exception e) {
-            log.error("감정 분석 중 오류 발생: {}", e.getMessage());
-            throw new RuntimeException("감정 분석 처리 실패", e);
+            log.warn("감정 분석 실패 → fallbackEmotion 사용: {}", e.getMessage());
+            emotion = fallbackEmotion();
         }
+
+        String searchKeyword = pickRandomSearchKeyword(emotion.keywords());
+        List<YouTubeResult> youtubeResults = youTubeService.searchYouTubeVideos(searchKeyword, 5);
+        List<SongWithYoutube> songs = mapToSongList(youtubeResults);
+
+        return SongResponse.from(emotion, searchKeyword, songs);
     }
 
     private String pickRandomSearchKeyword(List<String> keywords) {
@@ -60,5 +62,9 @@ public class SongServiceImpl implements SongService {
                     result.videoId()
             ))
             .toList();
+    }
+
+    private EmotionResponse fallbackEmotion() {
+        return new EmotionResponse(NEUTRAL_EMOTION, DEFAULT_CONFIDENCE, DEFAULT_KEYWORDS);
     }
 }

@@ -7,6 +7,7 @@ import com.movewave.youtube.model.response.YouTubeSearchResponse;
 import com.movewave.youtube.model.response.YouTubeItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -83,7 +84,7 @@ public class YouTubeServiceImpl implements YouTubeService {
     private YouTubeResult createYouTubeResult(YouTubeItem item) {
         String videoId = item.id().videoId();
         return new YouTubeResult(
-                item.snippet().title(),
+                StringEscapeUtils.unescapeHtml4(item.snippet().title()),
                 item.snippet().thumbnails().high().url(),
                 YOUTUBE_VIDEO_URL + videoId,
                 YOUTUBE_MUSIC_URL + videoId,

@@ -53,7 +53,7 @@ class YouTubeServiceImplTest {
         // given
         given(apiKeyProperties.key()).willReturn(TEST_API_KEY);
         YouTubeSearchResponse mockResponse = createMockSearchResponse();
-        given(youTubeApiClient.searchYouTubeVideos(anyString(), anyInt(), anyString()))
+        given(youTubeApiClient.searchVideos(anyString(), anyString(), anyString(), anyInt(), anyString()))
                 .willReturn(mockResponse);
 
         // when
@@ -93,7 +93,7 @@ class YouTubeServiceImplTest {
         // given
         given(apiKeyProperties.key()).willReturn(TEST_API_KEY);
         YouTubeSearchResponse emptyResponse = new YouTubeSearchResponse(List.of());
-        given(youTubeApiClient.searchYouTubeVideos(anyString(), anyInt(), anyString()))
+        given(youTubeApiClient.searchVideos(anyString(), anyString(), anyString(), anyInt(), anyString()))
                 .willReturn(emptyResponse);
 
         // when & then
@@ -107,7 +107,7 @@ class YouTubeServiceImplTest {
     void searchMultiple_NullResponse() {
         // given
         given(apiKeyProperties.key()).willReturn(TEST_API_KEY);
-        given(youTubeApiClient.searchYouTubeVideos(anyString(), anyInt(), anyString()))
+        given(youTubeApiClient.searchVideos(anyString(), anyString(), anyString(), anyInt(), anyString()))
                 .willReturn(null);
 
         // when & then
