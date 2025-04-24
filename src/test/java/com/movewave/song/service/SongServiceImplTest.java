@@ -53,7 +53,7 @@ class SongServiceImplTest {
         // 기본적인 감정 분석 응답 설정
         EmotionResponse emotionResponse = new EmotionResponse(TEST_PREDICTION, TEST_CONFIDENCE, TEST_KEYWORDS);
         given(emotionService.analyzeEmotion(any(), any()))
-                .willReturn(CompletableFuture.completedFuture(emotionResponse));
+                .willReturn(emotionResponse);
 
         // 기본적인 유튜브 검색 결과 설정
         youtubeResult = new YouTubeResult(
@@ -95,7 +95,7 @@ class SongServiceImplTest {
         SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
         EmotionResponse emotionResponse = new EmotionResponse(TEST_PREDICTION, TEST_CONFIDENCE, List.of());
         given(emotionService.analyzeEmotion(any(), any()))
-                .willReturn(CompletableFuture.completedFuture(emotionResponse));
+                .willReturn(emotionResponse);
 
         // when
         SongResponse response = songService.analyzeAndRecommend(request);
@@ -110,12 +110,15 @@ class SongServiceImplTest {
         // given
         SongRequest request = new SongRequest(TEST_TEXT, TEST_TYPE);
         given(emotionService.analyzeEmotion(any(), any()))
-                .willReturn(CompletableFuture.failedFuture(new RuntimeException("감정 분석 실패")));
+                .willThrow(new RuntimeException("감정 분석 실패"));
 
-        // when & then
-        assertThatThrownBy(() -> songService.analyzeAndRecommend(request))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("감정 분석 처리 실패");
+        // when
+        SongResponse result = songService.analyzeAndRecommend(request);
+
+        // then
+        assertThat(result.emotion()).isEqualTo("중립");
+        assertThat(result.confidence()).isEqualTo(0.0);
+        assertThat(result.keyword()).isEqualTo("편안한 음악");
     }
 
     @Test

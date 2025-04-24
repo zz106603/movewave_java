@@ -8,7 +8,7 @@ import com.movewave.emotion.model.response.EmotionResponse;
 
 import java.util.Map;
 
-@FeignClient(name = "flaskClient", url = "http://localhost:3000")
+@FeignClient(name = "flaskClient", url = "http://localhost:5000")
 public interface FlaskApiClient {
 
     @PostMapping(value = "/api/emotion/predict")

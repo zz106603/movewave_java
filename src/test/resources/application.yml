@@ -38,7 +38,7 @@ logging:
 jwt:
   expiration-time: '3600000'
   refresh-expiration-time: '86400000'
-  secret: ${JWT_SECRET}
+  secret: eW91ci12ZXJ5LXNlY3VyZS0zMi1ieXRlLXNlY3JldC1rZXkhIQ==
 
 redirect:
   url: ${REDIRECT_URL}
