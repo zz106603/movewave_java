@@ -30,6 +30,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public SongResponse analyzeAndRecommend(SongRequest request) {
+        log.info("Current thread: {}", Thread.currentThread());
         EmotionResponse emotion;
         try {
             emotion = emotionService.analyzeEmotion(request.text(), request.type());
