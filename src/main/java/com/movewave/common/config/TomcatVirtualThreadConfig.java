@@ -10,6 +10,11 @@ import java.util.concurrent.Executors;
 @Configuration
 public class TomcatVirtualThreadConfig {
 
+    /**
+     * Tomcat의 Connector에 Virtual Thread를 사용하는 Executor를 설정하는 메서드입니다.
+     *
+     * @return Virtual Thread를 사용하는 Executor를 설정하는 TomcatConnectorCustomizer
+     */
     @Bean
     public TomcatConnectorCustomizer tomcatVirtualThreadExecutorCustomizer() {
         return connector -> {

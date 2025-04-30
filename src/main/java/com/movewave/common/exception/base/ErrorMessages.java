@@ -1,7 +1,9 @@
 package com.movewave.common.exception.base;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 
 /**
  * 에러 메시지를 정의하는 열거형 클래스입니다.
