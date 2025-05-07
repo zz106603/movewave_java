@@ -19,7 +19,7 @@ public interface AccountApiDoc {
 
     /**
      * 계정 정보를 조회합니다.
-     * @param accountId 조회할 계정 ID
+     * @param userDetails 조회할 계정 ID
      * @return 계정 정보
      */
     @Operation(

@@ -8,17 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +36,7 @@ class EmotionServiceImplTest {
         // given
         EmotionResponse expected = new EmotionResponse(TEST_EMOTION, TEST_CONFIDENCE, TEST_KEYWORDS);
 
-        when(flaskApiClient.analyzeEmotion(any(Map.class))).thenReturn(expected);
+        when(flaskApiClient.analyzeEmotion(anyMap())).thenReturn(expected);
 
         // when
         EmotionResponse response = emotionService.analyzeEmotion(TEST_TEXT, TEST_TYPE);

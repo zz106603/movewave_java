@@ -47,6 +47,9 @@ class YouTubeServiceImplTest {
     private static final String TEST_VIDEO_URL_PREFIX = "https://www.youtube.com/watch?v=";
     private static final String TEST_MUSIC_URL_PREFIX = "https://music.youtube.com/watch?v=";
 
+    private static final String KEYWORD_ERROR_MESSAGE = "검색어는 필수입니다.";
+    private static final String YOUTUBE_ERROR_MESSAGE = "YouTube 검색 결과가 없습니다.";
+
     @Test
     @DisplayName("정상적인 YouTube 검색 성공")
     void searchMultiple_Success() {
@@ -61,7 +64,7 @@ class YouTubeServiceImplTest {
 
         // then
         assertThat(results).hasSize(1);
-        YouTubeResult result = results.get(0);
+        YouTubeResult result = results.getFirst();
         assertThat(result.videoTitle()).isEqualTo(TEST_TITLE);
         assertThat(result.thumbnailUrl()).isEqualTo(TEST_THUMBNAIL_URL);
         assertThat(result.videoUrl()).isEqualTo(TEST_VIDEO_URL_PREFIX + TEST_VIDEO_ID);
@@ -75,7 +78,7 @@ class YouTubeServiceImplTest {
         // when & then
         assertThatThrownBy(() -> youTubeService.searchYouTubeVideos(null, TEST_MAX_RESULTS))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("검색어는 필수입니다.");
+                .hasMessage(KEYWORD_ERROR_MESSAGE);
     }
 
     @Test
@@ -84,7 +87,7 @@ class YouTubeServiceImplTest {
         // when & then
         assertThatThrownBy(() -> youTubeService.searchYouTubeVideos("", TEST_MAX_RESULTS))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("검색어는 필수입니다.");
+                .hasMessage(KEYWORD_ERROR_MESSAGE);
     }
 
     @Test
@@ -99,7 +102,7 @@ class YouTubeServiceImplTest {
         // when & then
         assertThatThrownBy(() -> youTubeService.searchYouTubeVideos(TEST_QUERY, TEST_MAX_RESULTS))
                 .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("YouTube 검색 결과가 없습니다.");
+                .hasMessage(YOUTUBE_ERROR_MESSAGE);
     }
 
     @Test
@@ -113,7 +116,7 @@ class YouTubeServiceImplTest {
         // when & then
         assertThatThrownBy(() -> youTubeService.searchYouTubeVideos(TEST_QUERY, TEST_MAX_RESULTS))
                 .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("YouTube 검색 결과가 없습니다.");
+                .hasMessage(YOUTUBE_ERROR_MESSAGE);
     }
 
     private YouTubeSearchResponse createMockSearchResponse() {

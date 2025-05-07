@@ -34,13 +34,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        if (!(authentication instanceof OAuth2AuthenticationToken)) {
+        if (!(authentication instanceof OAuth2AuthenticationToken auth)) {
             throw new IllegalArgumentException("지원하지 않는 인증 타입입니다.");
         }
 
         log.info("OAuth2 로그인 성공");
 
-        OAuth2AuthenticationToken auth = (OAuth2AuthenticationToken) authentication;
         JwtToken jwtToken = jwtTokenProvider.createToken(auth);
 
         setTokenCookies(response, jwtToken);
