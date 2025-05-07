@@ -89,8 +89,8 @@ class FavoriteSongServiceImplTest {
 
         // then
         assertThat(result).hasSize(1);
-        assertThat(result.get(0).videoId()).isEqualTo(favoriteSong.getVideoId());
-        assertThat(result.get(0).title()).isEqualTo(favoriteSong.getTitle());
+        assertThat(result.getFirst().videoId()).isEqualTo(favoriteSong.getVideoId());
+        assertThat(result.getFirst().title()).isEqualTo(favoriteSong.getTitle());
     }
 
     @Test
@@ -107,7 +107,7 @@ class FavoriteSongServiceImplTest {
 
         // then
         assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).videoId()).isEqualTo(favoriteSong.getVideoId());
+        assertThat(result.getContent().getFirst().videoId()).isEqualTo(favoriteSong.getVideoId());
     }
 
     @Test

@@ -28,6 +28,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilterBean {
 
+    private static final String ACCESS_TOKEN_NAME = "accessToken";
+    private static final String REFRESH_TOKEN_NAME = "refreshToken";
+
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
@@ -62,7 +65,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             return;
         }
 
-        String accessToken = extractToken(request, "accessToken");
+        String accessToken = extractToken(request, ACCESS_TOKEN_NAME);
         if (isValidAccessToken(accessToken)) {
             authenticateWithAccessToken(accessToken);
         } else {
@@ -123,7 +126,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
      * @param response HTTP 응답
      */
     private void processRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = extractToken(request, "refreshToken");
+        String refreshToken = extractToken(request, REFRESH_TOKEN_NAME);
         validateRefreshToken(refreshToken);
 
         if (jwtTokenProvider.validateToken(refreshToken)) {

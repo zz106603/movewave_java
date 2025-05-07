@@ -2,6 +2,7 @@ package com.movewave.user.service;
 
 import com.movewave.user.model.response.AccountResponse;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**

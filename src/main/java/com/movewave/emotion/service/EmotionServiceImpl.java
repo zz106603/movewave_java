@@ -20,6 +20,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EmotionServiceImpl implements EmotionService {
+
+    private static final String TEXT_KEY = "text";
+    private static final String TYPE_KEY = "type";
+
     /** Flask API 클라이언트 */
     private final FlaskApiClient flaskApiClient;
     
@@ -49,6 +53,6 @@ public class EmotionServiceImpl implements EmotionService {
      * @return 요청 본문 Map
      */
     private Map<String, String> createRequestBody(String text, String type) {
-        return Map.of("text", text, "type", type);
+        return Map.of(TEXT_KEY, text, TYPE_KEY, type);
     }
 }

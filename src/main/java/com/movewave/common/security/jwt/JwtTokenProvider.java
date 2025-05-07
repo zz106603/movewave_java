@@ -39,7 +39,6 @@ public class JwtTokenProvider {
 
     private final CustomUserDetailsService userDetailsService; // 사용자 정보 조회 서비스
     private final Key key; // JWT 서명에 사용되는 키
-    private final JwtProperties jwtProperties; // JWT 설정 정보
 
     /**
      * JwtTokenProvider 생성자
@@ -48,7 +47,6 @@ public class JwtTokenProvider {
      */
     public JwtTokenProvider(CustomUserDetailsService userDetailsService, JwtProperties jwtProperties) {
         this.userDetailsService = userDetailsService;
-        this.jwtProperties = jwtProperties;
         // JWT 서명 키 초기화 메서드 호출
         this.key = initializeKey(jwtProperties.secret());
     }

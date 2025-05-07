@@ -35,6 +35,12 @@ class SongServiceImplTest {
     @InjectMocks
     private SongServiceImpl songService;
 
+    private static final String BASIC_KEYWORD = "감성 노래";
+
+    private static final String FALLBACK_EMOTION = "중립";
+    private static final double FALLBACK_CONFIDENCE = 0.0;
+    private static final String FALLBACK_KEYWORD = "편안한 음악";
+
     private static final String TEST_TEXT = "오늘은 정말 행복한 하루였다";
     private static final String TEST_TYPE = "일기";
     private static final String TEST_PREDICTION = "기쁨";
@@ -81,11 +87,11 @@ class SongServiceImplTest {
         assertThat(response.emotion()).isEqualTo(TEST_PREDICTION);
         assertThat(response.confidence()).isEqualTo(TEST_CONFIDENCE);
         assertThat(response.songs()).hasSize(1);
-        assertThat(response.songs().get(0).title()).isEqualTo(TEST_VIDEO_TITLE);
-        assertThat(response.songs().get(0).videoId()).isEqualTo(TEST_VIDEO_ID);
-        assertThat(response.songs().get(0).thumbnailUrl()).isEqualTo(TEST_THUMBNAIL_URL);
-        assertThat(response.songs().get(0).videoUrl()).isEqualTo(TEST_VIDEO_URL);
-        assertThat(response.songs().get(0).musicUrl()).isEqualTo(TEST_MUSIC_URL);
+        assertThat(response.songs().getFirst().title()).isEqualTo(TEST_VIDEO_TITLE);
+        assertThat(response.songs().getFirst().videoId()).isEqualTo(TEST_VIDEO_ID);
+        assertThat(response.songs().getFirst().thumbnailUrl()).isEqualTo(TEST_THUMBNAIL_URL);
+        assertThat(response.songs().getFirst().videoUrl()).isEqualTo(TEST_VIDEO_URL);
+        assertThat(response.songs().getFirst().musicUrl()).isEqualTo(TEST_MUSIC_URL);
     }
 
     @Test
@@ -101,7 +107,7 @@ class SongServiceImplTest {
         SongResponse response = songService.analyzeAndRecommend(request);
 
         // then
-        assertThat(response.keyword()).isEqualTo("감성 노래");
+        assertThat(response.keyword()).isEqualTo(BASIC_KEYWORD);
     }
 
     @Test
@@ -116,9 +122,9 @@ class SongServiceImplTest {
         SongResponse result = songService.analyzeAndRecommend(request);
 
         // then
-        assertThat(result.emotion()).isEqualTo("중립");
-        assertThat(result.confidence()).isEqualTo(0.0);
-        assertThat(result.keyword()).isEqualTo("편안한 음악");
+        assertThat(result.emotion()).isEqualTo(FALLBACK_EMOTION);
+        assertThat(result.confidence()).isEqualTo(FALLBACK_CONFIDENCE);
+        assertThat(result.keyword()).isEqualTo(FALLBACK_KEYWORD);
     }
 
     @Test
