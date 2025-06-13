@@ -63,3 +63,5 @@ jwt:
 redirect:
   url: ${REDIRECT_URL}
 
+fastapi:
+  url: ${FASTAPI_URL}

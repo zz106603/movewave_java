@@ -8,7 +8,7 @@ import com.movewave.emotion.model.response.EmotionResponse;
 
 import java.util.Map;
 
-@FeignClient(name = "flaskClient", url = "http://localhost:5000")
+@FeignClient(name = "FlaskApiClient", url = "${fastapi.url}")
 public interface FlaskApiClient {
 
     /**
