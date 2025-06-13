@@ -1,0 +1,45 @@
+apiVersion: apps/v1 # 리소스 버전
+kind: Deployment  # 리소스 종류
+metadata: # deployment의 이름을 정의
+  name: movewave-app
+spec: # 배포 스펙 정의
+  replicas: 1 # 1개의 pod만 실행
+  selector: # 어떤 pod이 이 Deployment의 관리 대상인지 지정
+    matchLabels:
+      app: movewave-app # Deployment가 관리할 pod이 무엇인지 찾는 조건
+  template: # pod 템플릿 정의
+    metadata:
+      labels:
+        app: movewave-app
+    spec:
+      containers: # 여러 개의 컨테이너 중 하나 정의
+        - name: movewave-app # 컨테이너 이름
+          image: movewave-app:latest # 사용할 도커 이미지
+          imagePullPolicy: IfNotPresent # 로컬에 이미지가 있으면 재다운로드 안함
+          ports: # pod 내부에서 오픈할 포트
+            - containerPort: 8080
+          env: # 환경변수 설정
+            - name: SPRING_PROFILES_ACTIVE
+              value: "local"
+            - name: DB_URL
+              value: ""
+            - name: DB_USERNAME
+              value: ""
+            - name: DB_PASSWORD
+              value: ""
+            - name: REDIS_HOST
+              value: ""
+            - name: REDIS_PORT
+              value: ""
+            - name: GOOGLE_CLIENT_ID
+              value: ""
+            - name: GOOGLE_CLIENT_SECRET
+              value: ""
+            - name: API_KEY
+              value: ""
+            - name: JWT_SECRET
+              value: ""
+            - name: REDIRECT_URL
+              value: ""
+            - name: FASTAPI_URL
+              value: ""
