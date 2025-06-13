@@ -1,0 +1,66 @@
+services:
+  app:
+    build: .
+    image: movewave-app:latest
+    container_name: movewave-app
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      API_KEY: ${API_KEY}
+      JWT_SECRET: ${JWT_SECRET}
+      REDIRECT_URL: ${REDIRECT_URL}
+      FASTAPI_URL: ${FASTAPI_URL}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+    depends_on:
+      - mysql
+      - redis
+      - movewave_python
+
+  movewave_python:
+    build:
+      context: ../movewave_python
+    container_name: movewave_python
+    ports:
+      - "5000:5000"
+
+  movewave_react:
+    build:
+      context: ../movewave_react
+    container_name: movewave_react
+    ports:
+      - "3000:3000"
+
+  mysql:
+    image: mysql:8.0
+    container_name: movewave-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      TZ: Asia/Seoul
+    volumes:
+      - ./db/init/conf.d:/etc/mysql/conf.d
+      - ./db/init/init.d:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7.2
+    container_name: movewave-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
