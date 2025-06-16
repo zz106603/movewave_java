@@ -18,28 +18,64 @@ spec: # 배포 스펙 정의
           imagePullPolicy: IfNotPresent # 로컬에 이미지가 있으면 재다운로드 안함
           ports: # pod 내부에서 오픈할 포트
             - containerPort: 8080
-          env: # 환경변수 설정
+          env:
             - name: SPRING_PROFILES_ACTIVE
-              value: "local"
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: SPRING_PROFILES_ACTIVE
             - name: DB_URL
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: DB_URL
             - name: DB_USERNAME
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: DB_USERNAME
             - name: DB_PASSWORD
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: DB_PASSWORD
             - name: REDIS_HOST
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: REDIS_HOST
             - name: REDIS_PORT
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: REDIS_PORT
             - name: GOOGLE_CLIENT_ID
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: GOOGLE_CLIENT_ID
             - name: GOOGLE_CLIENT_SECRET
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: GOOGLE_CLIENT_SECRET
             - name: API_KEY
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: API_KEY
             - name: JWT_SECRET
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: JWT_SECRET
             - name: REDIRECT_URL
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: REDIRECT_URL
             - name: FASTAPI_URL
-              value: ""
+              valueFrom:
+                secretKeyRef:
+                  name: movewave-secrets
+                  key: FASTAPI_URL
