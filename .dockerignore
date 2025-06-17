@@ -1,0 +1,14 @@
+.git
+.gradle
+.idea
+.vscode
+target
+*.iml
+*.log
+*.class
+.DS_Store
+.env
+docker-compose.yml
+Dockerfile
+README.md
+k8s/secret.yml

@@ -1,21 +1,21 @@
 apiVersion: apps/v1 # 리소스 버전
 kind: Deployment  # 리소스 종류
 metadata: # deployment의 이름을 정의
-  name: movewave-app
+  name: movewave-java
 spec: # 배포 스펙 정의
   replicas: 1 # 1개의 pod만 실행
   selector: # 어떤 pod이 이 Deployment의 관리 대상인지 지정
     matchLabels:
-      app: movewave-app # Deployment가 관리할 pod이 무엇인지 찾는 조건
+      app: movewave-java # Deployment가 관리할 pod이 무엇인지 찾는 조건
   template: # pod 템플릿 정의
     metadata:
       labels:
-        app: movewave-app
+        app: movewave-java
     spec:
       containers: # 여러 개의 컨테이너 중 하나 정의
-        - name: movewave-app # 컨테이너 이름
-          image: movewave-app:latest # 사용할 도커 이미지
-          imagePullPolicy: IfNotPresent # 로컬에 이미지가 있으면 재다운로드 안함
+        - name: movewave-java # 컨테이너 이름
+          image: yunhwan95/movewave_java:latest # 사용할 도커 이미지
+          imagePullPolicy: Always
           ports: # pod 내부에서 오픈할 포트
             - containerPort: 8080
           env:

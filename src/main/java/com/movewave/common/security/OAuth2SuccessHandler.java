@@ -45,6 +45,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         setTokenCookies(response, jwtToken);
         
         log.info("JWT 토큰 생성 및 쿠키 설정 완료");
+        log.info("Redirect URL: {}", redirectProperties.url());
         response.sendRedirect(redirectProperties.url());
     }
 
